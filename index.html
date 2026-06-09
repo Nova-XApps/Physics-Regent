@@ -5,6 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nova Physics Regents – Complete Study</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* Additional formula styling */
+    .formula-card code {
+      font-size: 1rem;
+      background: #0a192f;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.5rem;
+      display: inline-block;
+      font-family: 'SF Mono', 'Courier New', monospace;
+    }
+    .formula-card sub, .formula-card sup {
+      font-size: 0.75rem;
+    }
+  </style>
 </head>
 <body>
   <div id="root"></div>
@@ -15,10 +29,9 @@
   <script type="text/babel" data-presets="react">
     const { useState, useEffect, useRef } = React;
 
-    // ==============================================================
-    // COMPLETE CONTENT FROM ALL PDFs (38-page + 4 earlier)
-    // Every equation, table, worked example, flashcard, quiz question.
-    // ==============================================================
+    // --------------------------------------------------------------
+    // COMPLETE CONTENT – all topics from PDFs, with neatly formatted formulas
+    // --------------------------------------------------------------
     const UNITS = {
       foundations: {
         id: "foundations", label: "Foundations", icon: "📐", color: "#3b82f6",
@@ -50,7 +63,13 @@ Velocity-time graph: slope = acceleration, area under = displacement.
 | Momentum | Vector | has direction |
 | Electric Field | Vector | positive to negative |
 | Magnetic Field | Vector | north to south |`,
-            formulas: ["v̄ = (v_f+v_i)/2", "a = Δv/t", "v_f = v_i+at", "d = v_i t + ½at²", "v_f² = v_i²+2ad"],
+            formulas: [
+              "v̄ = (v<sub>f</sub> + v<sub>i</sub>)/2",
+              "a = Δv / t",
+              "v<sub>f</sub> = v<sub>i</sub> + a t",
+              "d = v<sub>i</sub> t + ½ a t²",
+              "v<sub>f</sub>² = v<sub>i</sub>² + 2 a d"
+            ],
             flashcards: [
               { q: "Scalar vs. vector?", a: "Scalar = magnitude only; vector = magnitude + direction." },
               { q: "Distance vs. displacement?", a: "Distance = total path (scalar); displacement = net change (vector)." },
@@ -73,11 +92,17 @@ Velocity-time graph: slope = acceleration, area under = displacement.
   Total time = 2·t_peak, Range = v_x × total time
   Components: v_x = v cosθ, v_y = v sinθ
   Resultant velocity: v = √(v_x² + v_y²)
-  Launch angle: θ = tan⁻¹(v_y / v_x)
-
-**Effect of gravity:** slows ascent, stops at peak, speeds descent.
-**Sign convention:** upward positive, downward negative (a_y = -9.8 m/s²).`,
-            formulas: ["a_c = v²/r", "F_c = mv²/r", "v_x = v cosθ", "v_y = v sinθ", "t_peak = v_y0/g", "range = v_x × 2t_peak", "v = √(v_x²+v_y²)", "θ = tan⁻¹(v_y/v_x)"],
+  Launch angle: θ = tan⁻¹(v_y / v_x)`,
+            formulas: [
+              "a<sub>c</sub> = v² / r",
+              "F<sub>c</sub> = m v² / r",
+              "v<sub>x</sub> = v cosθ",
+              "v<sub>y</sub> = v sinθ",
+              "t<sub>peak</sub> = v<sub>y0</sub> / g",
+              "range = v<sub>x</sub> × 2 t<sub>peak</sub>",
+              "v = √(v<sub>x</sub>² + v<sub>y</sub>²)",
+              "θ = tan⁻¹(v<sub>y</sub> / v<sub>x</sub>)"
+            ],
             flashcards: [
               { q: "Centripetal acceleration direction?", a: "Toward center." },
               { q: "If v doubles, a_c changes by?", a: "4× (since a_c ∝ v²)." },
@@ -107,7 +132,16 @@ Velocity-time graph: slope = acceleration, area under = displacement.
   On incline: object slides when mg sinθ > μ_s mg cosθ.
 
 **Equilibrium:** F_net = 0 → a = 0 (can still move at constant speed).`,
-            formulas: ["F_net = ma", "F_g = mg", "F_N = mg (horizontal)", "F_∥ = mg sinθ", "F_⊥ = mg cosθ", "F_f = μ F_N", "Static max: μ_s F_N", "Kinetic: μ_k F_N"],
+            formulas: [
+              "F<sub>net</sub> = m a",
+              "F<sub>g</sub> = m g",
+              "F<sub>N</sub> = m g (horizontal)",
+              "F<sub>∥</sub> = m g sinθ",
+              "F<sub>⊥</sub> = m g cosθ",
+              "F<sub>f</sub> = μ F<sub>N</sub>",
+              "static max: μ<sub>s</sub> F<sub>N</sub>",
+              "kinetic: μ<sub>k</sub> F<sub>N</sub>"
+            ],
             flashcards: [
               { q: "Newton's 2nd law?", a: "F_net = m a." },
               { q: "Weight formula?", a: "F_g = mg." },
@@ -129,7 +163,12 @@ Velocity-time graph: slope = acceleration, area under = displacement.
   - Explosion (initial at rest): 0 = m₁v₁ + m₂v₂
 
 **Impulse-momentum theorem:** FΔt = Δp. Longer Δt → smaller F (airbags, crumple zones).`,
-            formulas: ["p = mv", "J = FΔt = Δp", "(m₁+m₂)v_f = m₁v₁+m₂v₂", "m₁v₁+m₂v₂ = m₁v₁′+m₂v₂′ (elastic)"],
+            formulas: [
+              "p = m v",
+              "J = F Δt = Δp",
+              "(m₁ + m₂) v<sub>f</sub> = m₁v₁ + m₂v₂",
+              "m₁v₁ + m₂v₂ = m₁v₁′ + m₂v₂′ (elastic)"
+            ],
             flashcards: [
               { q: "Momentum formula?", a: "p = mv." },
               { q: "Impulse equals?", a: "Change in momentum: FΔt = Δp." },
@@ -147,7 +186,7 @@ Velocity-time graph: slope = acceleration, area under = displacement.
             id: "energy-types", title: "Energy Types, Work, Power, Efficiency",
             content: `**Kinetic Energy:** KE = ½mv²
 **Gravitational PE:** PE_g = mgh
-**Elastic PE (spring):** PE_s = ½kx² (k = spring constant, x = displacement from equilibrium)
+**Elastic PE (spring):** PE_s = ½kx² (k = spring constant, x = displacement)
 **Conservation of energy (no friction):** E_initial = E_final
 **Work:** W = F·d (force parallel to displacement). Positive work adds energy, negative removes.
 **Power:** P = W/t = F·v (Watts)
@@ -155,7 +194,14 @@ Velocity-time graph: slope = acceleration, area under = displacement.
 
 **Pendulum example:** at top: max PE_g, KE=0; at bottom: max KE, PE_g=0 (ideal).
 **Real pendulum:** some energy lost to thermal (heat) → amplitude decreases.`,
-            formulas: ["KE = ½mv²", "PE_g = mgh", "PE_s = ½kx²", "W = Fd", "P = W/t = Fv", "% eff = (output/input)×100%"],
+            formulas: [
+              "KE = ½ m v²",
+              "PE<sub>g</sub> = m g h",
+              "PE<sub>s</sub> = ½ k x²",
+              "W = F d",
+              "P = W / t = F v",
+              "% eff = (output / input) × 100%"
+            ],
             flashcards: [
               { q: "KE formula?", a: "½mv²." },
               { q: "PE_g formula?", a: "mgh." },
@@ -189,7 +235,15 @@ Velocity-time graph: slope = acceleration, area under = displacement.
 **Electrical power:** P = VI = I²R = V²/R
 
 **Wire analogy:** voltage = pressure, current = flow rate, resistance = pipe narrowness.`,
-            formulas: ["Q = mcΔT", "Q_gained+Q_lost=0", "V=IR", "R_series = ΣR_i", "1/R_parallel = Σ(1/R_i)", "P=VI", "W=VIt"],
+            formulas: [
+              "Q = m c ΔT",
+              "Q<sub>gained</sub> + Q<sub>lost</sub> = 0",
+              "V = I R",
+              "R<sub>series</sub> = Σ R<sub>i</sub>",
+              "1 / R<sub>parallel</sub> = Σ (1 / R<sub>i</sub>)",
+              "P = V I",
+              "W = V I t"
+            ],
             flashcards: [
               { q: "Heat equation?", a: "Q = mcΔT." },
               { q: "Specific heat of water?", a: "4186 J/kg·°C." },
@@ -224,7 +278,13 @@ Velocity-time graph: slope = acceleration, area under = displacement.
 **Polarization:** transverse waves oscillating in one direction only.
 
 **Resonance:** when driving frequency matches natural frequency → large amplitude (e.g., breaking glass, musical instruments).`,
-            formulas: ["v = fλ", "T = 1/f", "E = hf", "n = c/v", "n₁ sinθ₁ = n₂ sinθ₂"],
+            formulas: [
+              "v = f λ",
+              "T = 1 / f",
+              "E = h f",
+              "n = c / v",
+              "n₁ sinθ₁ = n₂ sinθ₂"
+            ],
             flashcards: [
               { q: "Wave speed equation?", a: "v = fλ." },
               { q: "Period relation?", a: "T = 1/f." },
@@ -258,7 +318,11 @@ Velocity-time graph: slope = acceleration, area under = displacement.
 **Concave mirror:** real/inverted (object beyond F) or virtual/upright/magnified (object inside F) – used in makeup mirrors, headlights.
 
 **Law of Reflection:** θᵢ = θᵣ.`,
-            formulas: ["1/F = 1/dₒ + 1/dᵢ", "M = -dᵢ/dₒ", "θᵢ = θᵣ"],
+            formulas: [
+              "1 / F = 1 / d<sub>o</sub> + 1 / d<sub>i</sub>",
+              "M = - d<sub>i</sub> / d<sub>o</sub>",
+              "θ<sub>i</sub> = θ<sub>r</sub>"
+            ],
             flashcards: [
               { q: "Mirror equation?", a: "1/F = 1/dₒ + 1/dᵢ." },
               { q: "Magnification formula?", a: "M = -dᵢ/dₒ." },
@@ -299,7 +363,12 @@ Velocity-time graph: slope = acceleration, area under = displacement.
   - ²H + ³H → ⁴He + n + energy (fusion)
   - ³H → e⁻ + ³He (beta decay)
   - ¹⁴⁸Gd → ⁴He + ¹⁴⁴Sm (alpha decay)`,
-            formulas: ["E = mc²", "Alpha: Z-2, A-4", "Beta: Z+1, A same", "Gamma: no change"],
+            formulas: [
+              "E = m c²",
+              "Alpha: Z → Z−2, A → A−4",
+              "Beta: Z → Z+1, A unchanged",
+              "Gamma: no change in Z or A"
+            ],
             flashcards: [
               { q: "What does redshift indicate?", a: "Galaxies moving away (expanding universe)." },
               { q: "What is CMB?", a: "Cosmic Microwave Background – leftover radiation from early universe." },
@@ -328,7 +397,11 @@ Velocity-time graph: slope = acceleration, area under = displacement.
   - Applications: motors (electrical → mechanical), generators (mechanical → electrical), transformers.
 
 **Electromagnetic induction:** induced emf = -N ΔΦ/Δt (Faraday's Law).`,
-            formulas: ["F_e = k q₁q₂/r²", "E = F_e/q", "k = 8.99×10⁹ N·m²/C²"],
+            formulas: [
+              "F<sub>e</sub> = k q₁ q₂ / r²",
+              "E = F<sub>e</sub> / q",
+              "k = 8.99 × 10⁹ N·m²/C²"
+            ],
             flashcards: [
               { q: "Coulomb's Law?", a: "F_e = k q₁q₂/r²." },
               { q: "Like charges do what?", a: "Repel." },
@@ -364,7 +437,7 @@ Velocity-time graph: slope = acceleration, area under = displacement.
 
     function shuffle(arr) { let a=[...arr]; for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
 
-    // Simulation components
+    // Simulation components (unchanged)
     const EnergyBarSim = () => {
       const [h, setH] = useState(25); const m=2,g=9.81,maxH=50; const pe=m*g*h; const ke=m*g*maxH-pe;
       return <div className="sim-controls"><label>Height: {h} m</label><input type="range" min="0" max="50" value={h} onChange={e=>setH(+e.target.value)}/><div className="sim-output">PE_g = {pe.toFixed(0)} J &nbsp; KE = {ke.toFixed(0)} J</div></div>;
@@ -396,7 +469,7 @@ Velocity-time graph: slope = acceleration, area under = displacement.
       return <div><div className="card"><textarea rows="4" style={{width:'100%',padding:'0.75rem',borderRadius:'0.5rem',border:'1px solid #e2e8f0'}} placeholder="Ask any Regents physics question..." value={q} onChange={e=>setQ(e.target.value)}/><button style={{marginTop:'0.5rem',padding:'0.5rem 1rem',background:'#3b82f6',color:'white',border:'none',borderRadius:'0.5rem'}} onClick={ask} disabled={busy}>{busy?'Thinking...':'Ask'}</button></div>{a && <div className="card"><strong>Answer:</strong><div style={{marginTop:'0.5rem'}}>{a}</div></div>}</div>;
     };
 
-    // Main App
+    // Main App (identical to before, but formulas now display with sub/sup)
     const App = () => {
       const [page, setPage] = useState('dashboard');
       const [activeUnit, setActiveUnit] = useState('foundations');
@@ -432,12 +505,12 @@ Velocity-time graph: slope = acceleration, area under = displacement.
       return <div><div className="header"><div className="logo">⚛️ Nova Physics Regents</div><div className="nav">{NAV.map(n=><button key={n.id} className={`nav-btn ${page===n.id?'active':''}`} onClick={()=>{setPage(n.id); setQuizActive(false); setExamActive(false);}}>{n.label}</button>)}</div><div className="xp-badge">🔥 Lv.{level} · {xp} XP · {xpToNext} to next</div></div>
       <div className="container">
         {page==='dashboard' && <div><h1>Your Nova Dashboard</h1><iframe className="yt-embed" src="https://www.youtube.com/embed/IYruBR8nDjk" title="Review" allowFullScreen></iframe><div className="grid-2"><div className="card">⭐ XP: {xp}</div><div className="card">🏆 Level: {level}</div><div className="card">✅ Topics: {completedCount}/{totalTopics}</div><div className="card">⬆️ Next: {xpToNext} XP</div></div><div className="card"><div>Level {level} progress</div><div className="progress-bar"><div className="progress-fill" style={{width:`${xp%100}%`}}/></div></div><h2>Units</h2><div className="grid-2">{Object.values(UNITS).map(u=>{ let done = u.topics.filter(t=>completed[`${u.id}-${t.id}`]).length; return <div key={u.id} className="card" style={{cursor:'pointer'}} onClick={()=>{setPage('learn'); setActiveUnit(u.id); setActiveTopic(null);}}><div style={{fontSize:'2rem'}}>{u.icon}</div><h3>{u.label}</h3><div>{u.topics.length} topics</div><div className="progress-bar"><div className="progress-fill" style={{width:`${(done/u.topics.length)*100}%`, background:u.color}}/></div></div>; })}</div><h2>Quick Actions</h2><div className="grid-2"><button className="card" onClick={()=>{setFcDeck(shuffle(ALL_FLASHCARDS)); setFcIdx(0); setFcFlip(false); setPage('flashcards');}}>🃏 Flashcards</button><button className="card" onClick={()=>startQuiz('all')}>❓ Quiz</button><button className="card" onClick={()=>{setExamActive(true); setExamAns({}); setExamSubmitted(false); setExamTime(1800); setPage('exam');}}>📝 Exam</button><button className="card" onClick={()=>setPage('formulas')}>📐 Formulas</button></div></div>}
-        {page==='learn' && <div className="learn-layout"><div>{Object.values(UNITS).map(u=><div key={u.id} style={{marginBottom:'0.75rem'}}><button className={`sidebar-unit-btn ${activeUnit===u.id?'open':''}`} onClick={()=>setActiveUnit(activeUnit===u.id?null:u.id)}>{u.icon} {u.label}</button>{activeUnit===u.id && <div style={{marginTop:'0.25rem'}}>{u.topics.map(t=><button key={t.id} className={`sidebar-topic-btn ${activeTopic?.id===t.id?'active':''} ${completed[`${u.id}-${t.id}`]?'done':''}`} onClick={()=>{setActiveTopic(t); markComplete(`${u.id}-${t.id}`); addXp(5);}}>{completed[`${u.id}-${t.id}`]?'✅ ':'○ '}{t.title}</button>)}</div>}</div>)}</div>{activeTopic ? <div className="card"><h2>{activeTopic.title}</h2><div className="prose" style={{whiteSpace:'pre-wrap'}}>{activeTopic.content}</div>{activeTopic.formulas && <div><h3>Key Formulas</h3><div className="grid-2">{activeTopic.formulas.map((f,i)=><div key={i} style={{background:'#f8fafc',padding:'0.5rem',borderRadius:'0.5rem'}}><code>{f}</code></div>)}</div></div>}<div style={{marginTop:'1rem',display:'flex',gap:'0.5rem'}}><button className="card" style={{padding:'0.5rem 1rem',margin:0}} onClick={()=>{setFcDeck(shuffle(activeTopic.flashcards||[])); setFcIdx(0); setFcFlip(false); setPage('flashcards');}}>🃏 Study</button><button className="card" style={{padding:'0.5rem 1rem',margin:0}} onClick={()=>startQuiz(UNITS[activeUnit]?.label)}>❓ Quiz</button></div></div> : <div className="card text-center"><p>Select a topic from the left.</p></div>}</div>}
+        {page==='learn' && <div className="learn-layout"><div>{Object.values(UNITS).map(u=><div key={u.id} style={{marginBottom:'0.75rem'}}><button className={`sidebar-unit-btn ${activeUnit===u.id?'open':''}`} onClick={()=>setActiveUnit(activeUnit===u.id?null:u.id)}>{u.icon} {u.label}</button>{activeUnit===u.id && <div style={{marginTop:'0.25rem'}}>{u.topics.map(t=><button key={t.id} className={`sidebar-topic-btn ${activeTopic?.id===t.id?'active':''} ${completed[`${u.id}-${t.id}`]?'done':''}`} onClick={()=>{setActiveTopic(t); markComplete(`${u.id}-${t.id}`); addXp(5);}}>{completed[`${u.id}-${t.id}`]?'✅ ':'○ '}{t.title}</button>)}</div>}</div>)}</div>{activeTopic ? <div className="card"><h2>{activeTopic.title}</h2><div className="prose" style={{whiteSpace:'pre-wrap'}}>{activeTopic.content}</div>{activeTopic.formulas && <div><h3>Key Formulas</h3><div className="grid-2">{activeTopic.formulas.map((f,i)=><div key={i} className="formula-card" style={{background:'#0a192f',padding:'0.5rem',borderRadius:'0.5rem'}}><code dangerouslySetInnerHTML={{__html: f}} /></div>)}</div></div>}<div style={{marginTop:'1rem',display:'flex',gap:'0.5rem'}}><button className="card" style={{padding:'0.5rem 1rem',margin:0}} onClick={()=>{setFcDeck(shuffle(activeTopic.flashcards||[])); setFcIdx(0); setFcFlip(false); setPage('flashcards');}}>🃏 Study</button><button className="card" style={{padding:'0.5rem 1rem',margin:0}} onClick={()=>startQuiz(UNITS[activeUnit]?.label)}>❓ Quiz</button></div></div> : <div className="card text-center"><p>Select a topic from the left.</p></div>}</div>}
         {page==='simulations' && <div><h1>Simulations</h1><div className="grid-2">{SIMULATIONS.map(s=><div key={s.id} className="card" style={{cursor:'pointer'}} onClick={()=>setSimActive(simActive===s.id?null:s.id)}><div style={{fontSize:'1.5rem'}}>{s.icon}</div><h3>{s.title}</h3>{simActive===s.id && <div style={{marginTop:'1rem'}}><s.comp/></div>}</div>)}</div></div>}
         {page==='flashcards' && <div><h1>Flashcards</h1>{fcDeck.length>0?<><div className="flashcard" onClick={()=>setFcFlip(!fcFlip)}>{fcFlip?fcDeck[fcIdx]?.a:fcDeck[fcIdx]?.q}</div><div className="flex-row" style={{justifyContent:'center',marginTop:'0.5rem'}}><button className="card" onClick={()=>{if(fcIdx>0){setFcIdx(fcIdx-1); setFcFlip(false);}}}>← Prev</button><button className="card" onClick={()=>{setFcIdx((fcIdx+1)%fcDeck.length); setFcFlip(false);}}>Next →</button><button className="card" onClick={()=>{setFcDeck(shuffle(ALL_FLASHCARDS)); setFcIdx(0); setFcFlip(false);}}>🔀 Shuffle</button></div></>:<p>No flashcards.</p>}</div>}
         {page==='quiz' && <div>{!quizActive?<div><h1>Quiz</h1><div className="grid-2"><button className="card" onClick={()=>startQuiz('all')}>🌐 All Units</button>{Object.values(UNITS).map(u=><button key={u.id} className="card" onClick={()=>startQuiz(u.label)}>{u.icon} {u.label}</button>)}</div></div>:quizDone?<div className="card text-center"><div style={{fontSize:'3rem'}}>{quizScore>=8?'🏆':'👍'}</div><h2>{quizScore}/{quizDeck.length} correct</h2><p>+{quizScore*10+20} XP</p><button className="card" onClick={()=>startQuiz('all')}>Try Again</button></div>:<div><div className="flex-between"><span>Q{quizIdx+1}/{quizDeck.length}</span><span>✅ {quizScore}</span></div><div className="progress-bar"><div className="progress-fill" style={{width:`${(quizIdx/quizDeck.length)*100}%`}}/></div><div className="card"><p style={{fontWeight:'bold'}}>{quizDeck[quizIdx]?.q}</p><div className="grid-2">{quizDeck[quizIdx]?.opts.map((opt,i)=><button key={i} className={`quiz-option ${quizSel!==null?(i===quizDeck[quizIdx].ans?'correct':(i===quizSel?'wrong':'')):''}`} onClick={()=>handleQuiz(i)} disabled={quizSel!==null}>{opt}</button>)}</div></div>{quizSel!==null && <div className={quizSel===quizDeck[quizIdx].ans?'feedback-correct':'feedback-wrong'}><p>{quizSel===quizDeck[quizIdx].ans?'✅ Correct!':'❌ Incorrect'}</p><p>{quizDeck[quizIdx].exp}</p><button className="card" style={{marginTop:'0.5rem'}} onClick={nextQuiz}>{quizIdx+1>=quizDeck.length?'Results':'Next →'}</button></div>}</div>}</div>}
         {page==='exam' && <div>{!examActive?<div className="card text-center"><h1>Practice Regents Exam</h1><p>20 questions · 30 minutes</p><button className="card" onClick={()=>{setExamActive(true); setExamAns({}); setExamSubmitted(false); setExamTime(1800);}}>Start Exam</button></div>:examSubmitted?<div><div className="card text-center"><h2>Score: {examDeck.filter((_,i)=>examAns[i]===examDeck[i].ans).length}/{examDeck.length}</h2><p>+{examDeck.filter((_,i)=>examAns[i]===examDeck[i].ans).length*15} XP</p><button className="card" onClick={()=>setExamActive(false)}>Retake</button></div>{examDeck.map((q,i)=><div key={i} className="card" style={{borderLeft:`4px solid ${examAns[i]===q.ans?'#22c55e':'#ef4444'}`}}><p><strong>{i+1}. {q.q}</strong></p><p>Your answer: {q.opts[examAns[i]]||'(blank)'} {examAns[i]!==q.ans && <span style={{color:'#16a34a'}}> · Correct: {q.opts[q.ans]}</span>}</p><p style={{fontSize:'0.75rem'}}>{q.exp}</p></div>)}</div>:<div><div className="flex-between"><span>⏱ {formatTime(examTime)}</span><span>{Object.keys(examAns).length}/{examDeck.length} answered</span></div>{examDeck.map((q,i)=><div key={i} className="card"><p><strong>{i+1}. {q.q}</strong></p><div className="grid-2">{q.opts.map((opt,j)=><button key={j} className="quiz-option" style={{background:examAns[i]===j?'#eff6ff':'white'}} onClick={()=>setExamAns({...examAns,[i]:j})}>{opt}</button>)}</div></div>)}<button style={{width:'100%',padding:'0.75rem',background:'#3b82f6',color:'white',border:'none',borderRadius:'0.5rem',marginTop:'0.5rem'}} onClick={submitExam}>Submit Exam</button></div>}</div>}
-        {page==='formulas' && <div><h1>Formula Reference</h1>{Object.values(UNITS).map(u=><div key={u.id}><h2 style={{color:u.color}}>{u.icon} {u.label}</h2><div className="grid-2">{u.topics.flatMap(t=>(t.formulas||[]).map((f,i)=><div key={`${u.id}-${i}`} className="card"><code>{f}</code><div className="meta">{t.title}</div></div>))}</div></div>)}</div>}
+        {page==='formulas' && <div><h1>Formula Reference</h1>{Object.values(UNITS).map(u=><div key={u.id}><h2 style={{color:u.color}}>{u.icon} {u.label}</h2><div className="grid-2">{u.topics.flatMap(t=>(t.formulas||[]).map((f,i)=><div key={`${u.id}-${i}`} className="card formula-card"><code dangerouslySetInnerHTML={{__html: f}} /><div className="meta" style={{fontSize:'0.7rem',color:'#90e0ef',marginTop:'0.25rem'}}>{t.title}</div></div>))}</div></div>)}</div>}
         {page==='ai-tutor' && <div><h1>Nova AI Tutor</h1><AITutor/></div>}
       </div></div>;
     };
