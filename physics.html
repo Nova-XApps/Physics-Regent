@@ -1,0 +1,1395 @@
+import React, { useState, useEffect, useRef } from "react";
+
+// --- COMPLETE DATA FROM ALL 4 PDFs – every topic, subtopic, example, table, question ---
+const UNITS = {
+  energy: {
+    id: "energy", label: "Energy", icon: "⚡", color: "#f59e0b",
+    topics: [
+      {
+        id: "energy-types", title: "1. Energy Types & Core Equations",
+        content: `Energy is a quantitative property of a system measured in joules (J). It can be stored as kinetic energy, gravitational potential energy, elastic potential energy, thermal energy, or energy in fields. Mechanical energy is the sum of kinetic and potential energy: ME = KE + PEg + PEs. In a closed system with no friction or outside work, total mechanical energy stays constant.
+
+**Worked Example 1 (Conservation of mechanical energy):** A 2.0 kg cart at the top of a ramp has 50 J of PEg and 0 J of KE. At the bottom, it has 5 J of PEg. Ignore friction. Total ME at top = 50 J. At bottom, KE = 50 J – 5 J = 45 J. Energy changed from gravitational potential to kinetic, but total ME constant.`,
+        formulas: [
+          { name: "Kinetic Energy", eq: "KE = ½mv²", vars: "m = mass (kg), v = velocity (m/s)" },
+          { name: "Gravitational PE", eq: "PEg = mgΔh", vars: "g = 9.81 m/s², h = height (m)" },
+          { name: "Elastic PE", eq: "PEs = ½kx²", vars: "k = spring constant (N/m), x = stretch (m)" },
+          { name: "Mechanical Energy", eq: "ME = KE + PEg + PEs", vars: "Constant in closed system w/o friction" },
+          { name: "Conservation of Energy", eq: "E_initial = E_final", vars: "No energy entering or leaving system" },
+        ],
+        flashcards: [
+          { q: "What is kinetic energy?", a: "Energy due to motion: KE = ½mv²" },
+          { q: "What is gravitational potential energy?", a: "Energy stored due to height: PEg = mgΔh" },
+          { q: "What is elastic potential energy?", a: "Energy stored in a stretched/compressed spring: PEs = ½kx²" },
+          { q: "What is mechanical energy?", a: "Sum of KE + PEg + PEs; constant in ideal closed system" },
+          { q: "What does conservation of energy state?", a: "Total energy in a closed system stays constant: E_initial = E_final" },
+          { q: "What is the unit of energy?", a: "Joule (J)" },
+          { q: "What does the spring constant k tell you?", a: "Stiffness of the spring (N/m)" },
+        ],
+        quiz: [
+          { q: "A 3 kg ball moves at 4 m/s. What is its kinetic energy?", choices: ["6 J","24 J","48 J","12 J"], ans: 1, explain: "KE = ½(3)(4²) = ½(3)(16) = 24 J" },
+          { q: "Which energy form is stored in a compressed spring?", choices: ["Kinetic","Thermal","Elastic potential","Gravitational potential"], ans: 2, explain: "Elastic PE = ½kx² is stored in compressed/stretched springs" },
+          { q: "A 2 kg object is raised 5 m. What is its PEg? (g=9.81)", choices: ["9.81 J","98.1 J","49 J","196.2 J"], ans: 1, explain: "PEg = mgΔh = (2)(9.81)(5) = 98.1 J" },
+          { q: "In a closed system with no friction, mechanical energy is:", choices: ["Always increasing","Always decreasing","Constant","Equal to zero"], ans: 2, explain: "ME = KE + PE stays constant when no work done by friction" },
+        ]
+      },
+      {
+        id: "work-power", title: "2. Work & Power",
+        content: `Work is energy transferred by a force acting through a distance. Work only transfers energy if the force is parallel to the direction of motion. Positive work adds energy to a system; negative work (opposing motion) removes energy or converts mechanical to thermal energy (e.g., friction). Power is the rate of doing work, measured in Watts.
+
+**Worked Example 2 (Work changes system energy):** A student pushes a box with a 15 N force for 4.0 m. Force is in same direction as motion. W = Fd = (15 N)(4.0 m) = 60 J. The student transferred 60 J of energy into the box system.`,
+        formulas: [
+          { name: "Work", eq: "W = Fd", vars: "Force parallel to displacement" },
+          { name: "Net Work = Energy Change", eq: "W_net = ΔE", vars: "Net work changes total system energy" },
+          { name: "Energy Conservation with Work", eq: "E_initial + W = E_final", vars: "For energy bar chart problems" },
+          { name: "Power", eq: "P = W/t = Fv", vars: "P in Watts, W in Joules, t in seconds" },
+        ],
+        flashcards: [
+          { q: "What is work?", a: "Energy transferred by a force through a distance: W = Fd" },
+          { q: "When does a force do work?", a: "Only when force is parallel to direction of motion" },
+          { q: "What is positive work?", a: "Work done ON a system — adds energy to the system" },
+          { q: "What is negative work?", a: "Work done AGAINST motion — removes energy (e.g., friction)" },
+          { q: "What is power?", a: "Rate of doing work: P = W/t = Fv, measured in Watts" },
+        ],
+        quiz: [
+          { q: "A 15 N force moves an object 4 m in the same direction. Work done?", choices: ["3.75 J","19 J","60 J","11 J"], ans: 2, explain: "W = Fd = (15)(4) = 60 J" },
+          { q: "A motor does 500 J of work in 10 s. What is its power?", choices: ["5000 W","50 W","500 W","510 W"], ans: 1, explain: "P = W/t = 500/10 = 50 W" },
+          { q: "Friction does negative work. This means:", choices: ["Energy is created","Energy is removed from the system","Speed increases","Mass changes"], ans: 1, explain: "Negative work removes mechanical energy, converting it to thermal energy" },
+        ]
+      },
+      {
+        id: "thermal-energy", title: "3. Thermal Energy Transfer & 2nd Law",
+        content: `Thermal energy transfers from a hotter object to a colder object until they reach a uniform temperature (Second Law of Thermodynamics). In a closed system, energy lost by the hot object equals energy gained by the cold object. Q = mcΔT is the key equation.
+
+**Worked Example 3 (Thermal energy gained):** A 0.50 kg sample of water warms from 20°C to 30°C. Use c = 4186 J/kg°C. Q = mcΔT = (0.50)(4186)(10) = 20,930 J. The water gained about 2.1×10⁴ J of thermal energy.`,
+        formulas: [
+          { name: "Thermal Energy", eq: "Q = mcΔT", vars: "m = mass (kg), c = specific heat (J/kg·°C), ΔT = temp change (°C)" },
+          { name: "Conservation of Thermal Energy", eq: "Q_gained + Q_lost = 0", vars: "In a closed system" },
+          { name: "Two-Object System", eq: "m₁c₁(Tf-Ti1) + m₂c₂(Tf-Ti2) = 0", vars: "Find final temperature" },
+        ],
+        flashcards: [
+          { q: "What is the equation for thermal energy change?", a: "Q = mcΔT (mass × specific heat × temp change)" },
+          { q: "Which direction does thermal energy flow?", a: "From HOT to COLD until uniform temperature" },
+          { q: "What is the specific heat of water?", a: "c = 4186 J/kg·°C" },
+          { q: "In a closed system, what is Q_gained + Q_lost?", a: "Zero — energy is conserved" },
+          { q: "What is the Second Law of Thermodynamics?", a: "Thermal energy flows from hot to cold, moving toward uniform distribution" },
+        ],
+        quiz: [
+          { q: "0.5 kg of water warms from 20°C to 30°C. Q = ? (c=4186)", choices: ["4186 J","20930 J","2093 J","41860 J"], ans: 1, explain: "Q = (0.5)(4186)(10) = 20,930 J" },
+          { q: "Thermal energy always flows:", choices: ["Cold to hot","Hot to cold","Randomly","Only through metals"], ans: 1, explain: "2nd Law: heat flows from higher temperature to lower temperature" },
+        ]
+      },
+      {
+        id: "ohms-law", title: "4. Ohm's Law, Circuits, Electrical Energy",
+        content: `Ohm's Law relates voltage, current, and resistance. Series circuits have one path; parallel circuits have multiple paths. Electrical energy and power equations follow from V = IR.
+
+**Worked Example 4 (Ohm's Law and electrical energy):** A 12 V battery is connected to a 6 Ω resistor for 10 s. Current I = V/R = 12/6 = 2 A. Power P = VI = 12×2 = 24 W. Electrical energy W = Pt = 24×10 = 240 J. The circuit transfers 240 J of electrical energy.`,
+        formulas: [
+          { name: "Ohm's Law", eq: "V = IR", vars: "V = voltage (volts), I = current (amps), R = resistance (ohms)" },
+          { name: "Electrical Power", eq: "P = VI = I²R = V²/R", vars: "P in Watts" },
+          { name: "Electrical Energy", eq: "W = Pt = VIt = I²Rt", vars: "W in Joules, t in seconds" },
+          { name: "Series: Total Resistance", eq: "R_eq = R₁ + R₂ + R₃...", vars: "Same current everywhere" },
+          { name: "Parallel: Total Resistance", eq: "1/R_eq = 1/R₁ + 1/R₂ + ...", vars: "Same voltage everywhere" },
+        ],
+        flashcards: [
+          { q: "State Ohm's Law", a: "V = IR: Voltage = Current × Resistance" },
+          { q: "In a series circuit, what is the same throughout?", a: "Current (I₁ = I₂ = I₃...)" },
+          { q: "In a parallel circuit, what is the same throughout?", a: "Voltage (V₁ = V₂ = V₃...)" },
+          { q: "How do you add resistors in series?", a: "R_eq = R₁ + R₂ + R₃ (just add them up)" },
+          { q: "What is electrical power?", a: "P = VI = I²R = V²/R, measured in Watts" },
+          { q: "What direction is conventional current?", a: "From positive terminal to negative terminal" },
+        ],
+        quiz: [
+          { q: "A 12V battery connects to 6Ω resistor. Current = ?", choices: ["72 A","2 A","0.5 A","18 A"], ans: 1, explain: "I = V/R = 12/6 = 2 A" },
+          { q: "In a series circuit with 3Ω and 5Ω, total resistance = ?", choices: ["1.875 Ω","15 Ω","8 Ω","2 Ω"], ans: 2, explain: "Series: R_eq = 3 + 5 = 8 Ω" },
+          { q: "Power with 12V and 2A current = ?", choices: ["6 W","14 W","24 W","144 W"], ans: 2, explain: "P = VI = (12)(2) = 24 W" },
+          { q: "Energy used in 10 seconds at 24W = ?", choices: ["2.4 J","240 J","34 J","0.42 J"], ans: 1, explain: "W = Pt = (24)(10) = 240 J" },
+        ]
+      },
+      {
+        id: "efficiency", title: "5. Device Efficiency & Energy Conversion",
+        content: `A device converts one form of energy to another. Useful output energy is never 100% of input energy — some is lost as heat, sound, etc. Percent efficiency measures how well a device converts energy. Engineers use criteria, constraints, trade-offs, and refinement.
+
+**Worked Example 5 (Percent efficiency):** A generator receives 800 J of mechanical energy and produces 200 J of electrical energy. % efficiency = (200/800)×100% = 25%. The other 600 J was transferred to less useful forms (thermal, sound).
+
+**Device examples table:** Wind turbine (kinetic → electrical), Solar cell (light → electrical), Generator (mechanical → electrical), Battery‑powered bulb (chemical/electrical → light).`,
+        formulas: [
+          { name: "Percent Efficiency", eq: "% = (output/input) × 100%", vars: "Always ≤ 100%" },
+        ],
+        flashcards: [
+          { q: "What is percent efficiency?", a: "(Useful output / Total input) × 100% — always ≤ 100%" },
+          { q: "What are the inputs/outputs of a wind turbine?", a: "Input: kinetic energy of wind. Output: electrical energy. Loss: heat, sound, friction" },
+          { q: "What is a 'trade-off' in device design?", a: "A benefit that comes with a cost (e.g., more blades = more power but more mass/cost)" },
+          { q: "What are 'constraints' in device design?", a: "Limits on the design: materials, cost, time, safety, size" },
+          { q: "What are 'criteria' in device design?", a: "What the design should accomplish: high voltage, bright light, low cost" },
+        ],
+        quiz: [
+          { q: "Generator gets 800J mechanical energy, produces 200J electrical. Efficiency = ?", choices: ["200%","25%","400%","75%"], ans: 1, explain: "% = (200/800) × 100 = 25%" },
+          { q: "Which device converts light energy to electrical energy?", choices: ["Generator","Wind turbine","Solar cell","Battery"], ans: 2, explain: "Solar cells convert light/radiation energy into electrical energy" },
+          { q: "What is always true about percent efficiency?", choices: ["It equals exactly 100%","It is always over 100%","It is never greater than 100%","It doesn't depend on input"], ans: 2, explain: "Some energy is always lost to heat/sound — efficiency < 100%" },
+        ]
+      },
+      {
+        id: "field-energy", title: "6. Energy Stored in Fields (HS‑PS3‑5)",
+        content: `A field is a region where an object can experience a force without touching another object. Gravitational, electric, and magnetic fields store potential energy. When two interacting objects change relative position, the energy stored in the field changes. For example, when masses move apart against gravity, work is done and field energy increases. If they move together in the direction of the force, field energy decreases and kinetic energy increases.
+
+**Gravitational Field:** masses attract, PEg → KE. **Electric/Magnetic Fields:** can be attractive or repulsive. Moving with the field force → field energy → KE; moving against field force → KE → field energy (or external work needed).`,
+        formulas: [
+          { name: "Field Energy Change", eq: "ΔE_field = -W_field", vars: "Work done by the field" },
+        ],
+        flashcards: [
+          { q: "What is a field?", a: "A region where an object can experience a force without contact" },
+          { q: "What happens to field energy when objects move in the direction of the field force?", a: "Field energy decreases, kinetic energy increases" },
+          { q: "What happens when objects move against the field force?", a: "Field energy increases (or external work is done)" },
+        ],
+        quiz: [
+          { q: "Two positive charges are released. Which way do they move?", choices: ["Toward each other","Away from each other","Stay still","Orbit"], ans: 1, explain: "Like charges repel, so they move apart, decreasing field energy and increasing KE" },
+        ]
+      }
+    ]
+  },
+  forces: {
+    id: "forces", label: "Forces & Interactions", icon: "🎯", color: "#ef4444",
+    topics: [
+      {
+        id: "newtons-laws", title: "1. Newton's Laws, Kinematics & Free‑Body Diagrams",
+        content: `**Newton's First Law (Inertia):** Objects keep the same velocity unless acted on by a net external force. **Second Law:** F_net = ma (net force causes acceleration in direction of net force). **Third Law:** Forces come in equal, opposite pairs on different objects.
+
+**Kinematics equations** (for constant acceleration):
+- v_f = v_i + a t
+- d = v_i t + ½ a t²
+- v_f² = v_i² + 2 a d
+
+**Free-Body Diagram (FBD) Rules:** 1. Draw object as a box, dot at center of mass. 2. Draw only forces acting on the object. 3. Arrows start on the center of mass. 4. Label each force (Fg, FN, Fapplied, FT, Ff, Fair).
+
+**Projectile Motion:** Horizontal and vertical motions are independent. Gravity only affects vertical. At highest point, v_y = 0, a_y = -9.8 m/s², v_x constant. Range d_x = v_x·t.
+
+**Worked Example 1 (Net force and acceleration):** A 4.0 kg cart has 12 N right and 4 N friction left. F_net = 12-4 = 8 N right. a = F_net/m = 8/4 = 2.0 m/s² right.
+
+**Worked Example 2 (Weight):** A 60 kg student: Fg = mg = (60)(9.81) = 588.6 N downward.
+
+**Worked Example 3 (Motion graph slope and area):** Velocity‑time graph: constant 3.0 m/s for 5.0 s → displacement = area = 3×5 = 15 m; slope = 0 → a = 0.`,
+        formulas: [
+          { name: "Newton's 2nd Law", eq: "F_net = ma", vars: "F in N, m in kg, a in m/s²" },
+          { name: "Weight", eq: "Fg = mg", vars: "g = 9.81 m/s²" },
+          { name: "Kinematic 1", eq: "vf = vi + at", vars: "v in m/s, a in m/s², t in s" },
+          { name: "Kinematic 2", eq: "d = vit + ½at²", vars: "d = displacement (m)" },
+          { name: "Kinematic 3", eq: "vf² = vi² + 2ad", vars: "Useful when time unknown" },
+        ],
+        flashcards: [
+          { q: "Newton's First Law (Inertia)?", a: "Objects keep the same velocity unless acted on by a net external force" },
+          { q: "Newton's Second Law?", a: "F_net = ma — net force causes acceleration in the direction of the net force" },
+          { q: "Newton's Third Law?", a: "Forces come in equal, opposite pairs acting on DIFFERENT objects" },
+          { q: "What is weight in physics?", a: "Fg = mg — the gravitational force on an object (NOT mass!)" },
+          { q: "What does a free-body diagram show?", a: "All forces acting on one object as arrows from the center of mass" },
+          { q: "What is the acceleration at the highest point of a projectile?", a: "a_y = -9.8 m/s² (gravity still acts); a_x = 0" },
+        ],
+        quiz: [
+          { q: "4kg cart: 12N right, 4N friction left. Acceleration = ?", choices: ["2 m/s² right","3 m/s² right","4 m/s² left","8 m/s² right"], ans: 0, explain: "F_net = 12-4 = 8N; a = F/m = 8/4 = 2 m/s² right" },
+          { q: "Weight of a 60 kg person on Earth?", choices: ["60 N","588.6 N","9.81 N","600 N"], ans: 1, explain: "Fg = mg = (60)(9.81) = 588.6 N" },
+          { q: "When F_net = 0, the object is:", choices: ["Must be stationary","Accelerating","Stationary or constant velocity","Decelerating"], ans: 2, explain: "Zero net force = equilibrium = stationary OR moving at constant velocity" },
+          { q: "On a position-time graph, slope represents:", choices: ["Acceleration","Displacement","Velocity","Force"], ans: 2, explain: "Slope of position-time graph = velocity" },
+          { q: "Which two trials best show increasing net force increases acceleration when mass is constant? (Trial1: 2kg,4N,2m/s²; Trial2:2kg,8N,4m/s²; Trial3:4kg,8N,2m/s²; Trial4:4kg,12N,3m/s²)", choices: ["1&2","2&3","3&4","1&3"], ans: 0, explain: "Trials 1 and 2 have same mass (2kg) but different net force, acceleration changes proportionally." },
+          { q: "Calculate acceleration of a 5.0 kg cart with net force 15 N", choices: ["3 m/s²","75 m/s²","0.33 m/s²","10 m/s²"], ans: 0, explain: "a = F/m = 15/5 = 3 m/s²" },
+        ]
+      },
+      {
+        id: "momentum", title: "2. Momentum & Collisions",
+        content: `Momentum is mass times velocity (p = mv). In collisions with no net external force, total momentum is conserved. **Elastic collisions** conserve both momentum and kinetic energy. **Inelastic collisions** conserve only momentum. **Perfectly inelastic** – objects stick together.
+
+**Worked Example 4 (Perfectly inelastic collision with signs):** A 2.0 kg cart moves right at +6.0 m/s and sticks to a 1.0 kg cart moving left at -3.0 m/s. Total p = (2)(6)+(1)(-3)=12-3=9 kg·m/s. After: (3)vf = 9 → vf = +3.0 m/s (right).`,
+        formulas: [
+          { name: "Momentum", eq: "p = mv", vars: "p in kg·m/s, direction matters" },
+          { name: "Conservation of Momentum", eq: "p_before = p_after", vars: "No net external force" },
+          { name: "Perfectly Inelastic", eq: "(m₁+m₂)vf = m₁v₁i + m₂v₂i", vars: "Objects stick together" },
+        ],
+        flashcards: [
+          { q: "What is momentum?", a: "p = mv — product of mass and velocity; direction matters" },
+          { q: "What is an elastic collision?", a: "Objects bounce apart — BOTH momentum AND kinetic energy conserved" },
+          { q: "What is an inelastic collision?", a: "Objects deform/heat up — momentum conserved, KE NOT conserved" },
+          { q: "What is a perfectly inelastic collision?", a: "Objects stick together — same final velocity; momentum conserved, KE not" },
+          { q: "When is momentum conserved?", a: "When there is no net external force on the system" },
+        ],
+        quiz: [
+          { q: "2kg cart at +6m/s sticks to 1kg cart at −3m/s. Final velocity?", choices: ["+1 m/s","+3 m/s","−3 m/s","+9 m/s"], ans: 1, explain: "p = (2)(6)+(1)(−3) = 9 kg·m/s; vf = 9/3 = +3 m/s" },
+          { q: "Which collision conserves kinetic energy?", choices: ["Perfectly inelastic","Inelastic","Elastic","All of the above"], ans: 2, explain: "Only elastic collisions conserve both momentum and kinetic energy" },
+        ]
+      },
+      {
+        id: "impulse", title: "3. Impulse & Safety Devices",
+        content: `Impulse equals change in momentum: J = FΔt = Δp = mΔv. For the same Δp, increasing collision time decreases average force. Safety devices (airbags, helmets, crumple zones, seat belts, parachutes) use this principle.
+
+**Worked Example 5 (Impulse and average force):** A 0.20 kg egg changes from 12 m/s to 0 m/s. Δp = 2.4 kg·m/s. If Δt = 0.020 s → F = 2.4/0.020 = 120 N. If Δt = 0.20 s → F = 2.4/0.20 = 12 N. Ten times longer time → ten times less force.
+
+**Safety feature trade-offs table:** Airbag (increases stopping time, cost/space); Seat belt (stretches, comfort); Crumple zone (deforms, repair cost); Helmet (foam, mass/heat).`,
+        formulas: [
+          { name: "Impulse", eq: "J = FΔt = Δp = mΔv", vars: "J in N·s or kg·m/s" },
+          { name: "Average Force", eq: "F = Δp/Δt", vars: "Longer Δt → smaller F" },
+        ],
+        flashcards: [
+          { q: "What is impulse?", a: "J = FΔt = Δp = mΔv (force × time = change in momentum)" },
+          { q: "How do airbags reduce injury?", a: "They increase stopping time → same momentum change but smaller force" },
+          { q: "How does a crumple zone work?", a: "Car front deforms to increase collision time → lower force on passengers" },
+          { q: "If stopping time doubles, force:", a: "Halves (for the same change in momentum)" },
+          { q: "Name 4 safety devices that use impulse principle", a: "Airbag, helmet/padding, crumple zone, seat belt" },
+        ],
+        quiz: [
+          { q: "0.2 kg egg: 12→0 m/s in 0.02s. Force = ?", choices: ["120 N","240 N","12 N","2.4 N"], ans: 0, explain: "Δp = (0.2)(12) = 2.4 N·s; F = 2.4/0.02 = 120 N" },
+          { q: "Same egg stops in 0.2s instead. Force = ?", choices: ["120 N","24 N","12 N","1.2 N"], ans: 2, explain: "F = 2.4/0.2 = 12 N — 10× longer time → 10× less force" },
+        ]
+      },
+      {
+        id: "field-forces", title: "4. Gravitational & Electric Forces, Circular Motion",
+        content: `Newton's Law of Gravitation and Coulomb's Law both follow inverse-square relationships: distance doubling → force becomes ¼. Fields explain action at a distance.
+
+**Centripetal Force:** Fc = mv²/r, points toward center. For orbits, gravity provides Fc. For a car turning on a flat road, friction provides Fc.
+
+**Worked Example 6 (Inverse-square reasoning):** Two objects exert gravitational force F at distance r. If distance becomes 2r, force becomes F/4.`,
+        formulas: [
+          { name: "Gravitational Force", eq: "Fg = Gm₁m₂/r²", vars: "G = 6.67×10⁻¹¹ N·m²/kg²" },
+          { name: "Electrostatic Force", eq: "Fe = kq₁q₂/r²", vars: "k = 8.99×10⁹ N·m²/C²" },
+          { name: "Centripetal Force", eq: "Fc = mv²/r", vars: "Points toward center" },
+          { name: "Centripetal Acceleration", eq: "ac = v²/r", vars: "a in m/s²" },
+        ],
+        flashcards: [
+          { q: "What is an inverse-square law?", a: "Force ∝ 1/r² — double the distance → force becomes 1/4 as large" },
+          { q: "Is gravity attractive or repulsive?", a: "Always attractive — mass is always positive" },
+          { q: "Can electrostatic force be repulsive?", a: "Yes — like charges repel, opposite charges attract" },
+          { q: "What is centripetal force?", a: "Net inward force that keeps an object moving in a circle; Fc = mv²/r" },
+          { q: "What provides centripetal force for orbiting satellites?", a: "Gravity (Fg acts as centripetal force)" },
+        ],
+        quiz: [
+          { q: "Distance between masses doubles. Gravitational force becomes:", choices: ["2×","½×","4×","¼×"], ans: 3, explain: "Inverse square: (2r)² = 4r², so force becomes F/4" },
+          { q: "Two positive charges are released. They:", choices: ["Attract each other","Repel each other","Stay still","Orbit each other"], ans: 1, explain: "Like charges repel" },
+          { q: "Car turning on flat road — centripetal force is provided by:", choices: ["Normal force","Gravity","Friction","Engine"], ans: 2, explain: "Friction provides the inward (centripetal) force for a turning car" },
+        ]
+      },
+      {
+        id: "electromagnetism", title: "5. Electromagnetism (HS‑PS2‑5)",
+        content: `Electric current produces a magnetic field (Oersted's experiment). A changing magnetic field produces an electric current (Faraday's induction). These two-way relationships enable motors, generators, and transformers.
+
+**Sample investigation steps:** To show current → magnetic field: connect a coil to a battery, place compass nearby; when switch closed, compass deflects. To show changing magnetic field → current: move a magnet into/out of a coil connected to an ammeter; needle moves.
+
+**Applications:** electromagnets, motors, generators, transformers, speakers, wireless charging, MRI, maglev trains.`,
+        formulas: [],
+        flashcards: [
+          { q: "What does electric current produce?", a: "A magnetic field around the wire or coil" },
+          { q: "What produces an electric current by induction?", a: "A CHANGING magnetic field near a wire or coil" },
+          { q: "How do you detect a magnetic field in an investigation?", a: "Use a compass — deflection = magnetic field present" },
+          { q: "How do you detect induced current?", a: "Use an ammeter — if needle moves, current is produced" },
+          { q: "Name 3 applications of electromagnetism", a: "Electromagnets, motors, generators, transformers, speakers, MRI, maglev trains" },
+        ],
+        quiz: [
+          { q: "A compass deflects near a wire carrying current. This shows:", choices: ["Magnetic field creates current","Current creates magnetic field","Voltage creates magnetic field","Mass creates magnetic field"], ans: 1, explain: "Compass deflects because current in wire creates a surrounding magnetic field" },
+          { q: "Moving a magnet into a coil will:", choices: ["Create a temperature change","Create an electric current","Create gravity","Do nothing"], ans: 1, explain: "Changing magnetic field (moving magnet) induces electric current in coil" },
+          { q: "Which device converts mechanical energy to electrical using EM induction?", choices: ["Motor","Battery","Generator","Resistor"], ans: 2, explain: "Generators use rotating magnets/coils to induce current via EM induction" },
+        ]
+      }
+    ]
+  },
+  waves: {
+    id: "waves", label: "Waves & Radiation", icon: "🌊", color: "#8b5cf6",
+    topics: [
+      {
+        id: "wave-basics", title: "1. Wave Basics, Phase & Speed",
+        content: `A wave is a disturbance that transfers energy. **Transverse waves** (particle motion perpendicular to wave direction) – light, water. **Longitudinal waves** (parallel) – sound. Key properties: amplitude (m), wavelength λ (m), frequency f (Hz), period T (s), wave speed v (m/s). v = fλ, T = 1/f.
+
+**Phase** describes the relative position of two waves. In phase → constructive interference; out of phase → destructive interference. 1 cycle = 360°, half cycle = 180°, quarter cycle = 90°.
+
+When a wave enters a new medium, frequency stays the same (same source), but speed and wavelength may change.`,
+        formulas: [
+          { name: "Wave Speed", eq: "v = fλ", vars: "v in m/s, f in Hz, λ in m" },
+          { name: "Period-Frequency", eq: "T = 1/f", vars: "T in seconds" },
+        ],
+        flashcards: [
+          { q: "What is a transverse wave?", a: "Particle motion perpendicular to wave direction (light, water)" },
+          { q: "What is a longitudinal wave?", a: "Particle motion parallel to wave direction (sound)" },
+          { q: "What is amplitude?", a: "Maximum displacement from midpoint — related to energy" },
+          { q: "What is wavelength?", a: "Distance of one full cycle (meters)" },
+          { q: "What is frequency?", a: "Number of cycles per second (hertz)" },
+          { q: "What is period?", a: "Time for one full cycle: T = 1/f (seconds)" },
+          { q: "What is phase?", a: "Relative position of two waves in their cycle" },
+        ],
+        quiz: [
+          { q: "Wave: v = 340 m/s, f = 170 Hz. Wavelength = ?", choices: ["2 m","57800 m","0.5 m","510 m"], ans: 0, explain: "λ = v/f = 340/170 = 2 m" },
+          { q: "A wave has period 0.25s. Frequency = ?", choices: ["0.25 Hz","4 Hz","2.5 Hz","25 Hz"], ans: 1, explain: "f = 1/T = 1/0.25 = 4 Hz" },
+          { q: "When a wave enters a new medium, what stays the same?", choices: ["Speed","Wavelength","Frequency","All of the above"], ans: 2, explain: "Frequency stays constant because source doesn't change; speed and λ may change" },
+        ]
+      },
+      {
+        id: "em-spectrum", title: "2. Electromagnetic Spectrum, Refraction & Diffraction",
+        content: `EM waves travel at c = 3×10⁸ m/s in vacuum. Spectrum order (low to high frequency): Radio, Microwave, Infrared, Visible, Ultraviolet, X‑ray, Gamma. Higher frequency → higher photon energy (E = hf). Ionizing radiation (UV, X‑ray, gamma) can damage cells.
+
+**Refraction:** Bending of light when moving between media (Snell's law: n₁sinθ₁ = n₂sinθ₂). **Diffraction:** Waves bend/spread after passing through a small opening or around an edge (wave model). **Polarization:** Light wave vibrating in one direction (transverse wave property).
+
+**EM radiation effects on matter table:** Microwave (heats water – cooking, tissue heating), Infrared (thermal energy – remote controls), UV (damages DNA – sterilization, sunburn), X‑ray/gamma (ionization – medical imaging, cancer risk).`,
+        formulas: [
+          { name: "Speed of Light", eq: "c = 3×10⁸ m/s", vars: "in vacuum" },
+          { name: "Photon Energy", eq: "E = hf = hc/λ", vars: "h = 6.63×10⁻³⁴ J·s" },
+          { name: "Index of Refraction", eq: "n = c/v", vars: "n = optical density" },
+          { name: "Snell's Law", eq: "n₁sinθ₁ = n₂sinθ₂", vars: "θ measured from normal" },
+        ],
+        flashcards: [
+          { q: "Order EM spectrum low→high frequency", a: "Radio → Microwave → Infrared → Visible → UV → X-ray → Gamma" },
+          { q: "What is ionizing radiation?", a: "High-frequency radiation (UV, X-ray, gamma) that can remove electrons and damage cells" },
+          { q: "What is photon energy?", a: "E = hf — higher frequency = more energy per photon" },
+          { q: "What does microwave radiation do to matter?", a: "Heats water molecules — used in cooking and can heat tissue" },
+          { q: "What is refraction?", a: "Bending of light when it moves from one medium to another (speed change)" },
+          { q: "What is diffraction?", a: "Waves bend/spread out after passing through a small opening or around an edge" },
+          { q: "What is polarization?", a: "Light wave vibrating in one direction (transverse wave can be filtered)" },
+        ],
+        quiz: [
+          { q: "Which EM radiation has highest photon energy?", choices: ["Radio","Visible light","Infrared","Gamma rays"], ans: 3, explain: "Gamma rays have highest frequency → highest photon energy E = hf" },
+          { q: "Light goes from air into glass (slower). It bends:", choices: ["Away from normal","Toward the normal","Stays straight","Reflects completely"], ans: 1, explain: "When light slows, it bends toward the normal (Snell's Law)" },
+          { q: "UV radiation risk to living tissue:", choices: ["No effect","Heats water","Can damage skin/DNA","Only heats metal"], ans: 2, explain: "UV has enough energy to damage DNA and skin cells" },
+        ]
+      },
+      {
+        id: "wave-particle", title: "3. Wave-Particle Duality & Interference",
+        content: `Light can be modeled as waves (interference, diffraction, refraction, resonance) OR as particles/photons (photoelectric effect). Scientists choose the model that best explains each phenomenon.
+
+**Interference (wave model):** Constructive (crest+crest) → larger amplitude; Destructive (crest+trough) → smaller amplitude.
+
+**Photoelectric effect (particle model):** Emission of electrons from metal when light of sufficient frequency hits it. Low‑frequency light does not eject electrons even if very bright because each photon has insufficient energy (E=hf).`,
+        formulas: [
+          { name: "Photon Energy", eq: "E_photon = hf = hc/λ", vars: "h = 6.63×10⁻³⁴ J·s" },
+        ],
+        flashcards: [
+          { q: "What is the photoelectric effect?", a: "Emission of electrons from metal when light of sufficient frequency hits it" },
+          { q: "Why does low-frequency light not eject electrons?", a: "Each photon has insufficient energy (E=hf); higher intensity doesn't help — energy is discrete" },
+          { q: "What phenomena support the WAVE model?", a: "Interference, diffraction, refraction, polarization, resonance" },
+          { q: "What phenomena support the PARTICLE model?", a: "Photoelectric effect — energy transferred in discrete packets (photons)" },
+          { q: "What is constructive interference?", a: "Two waves add together (crest+crest) → larger amplitude" },
+          { q: "What is destructive interference?", a: "Two waves cancel (crest+trough) → smaller amplitude" },
+        ],
+        quiz: [
+          { q: "Very bright LOW-frequency light hits metal. Electrons are emitted?", choices: ["Yes, many electrons","Yes, a few electrons","No electrons","Depends on metal"], ans: 2, explain: "Low frequency = low photon energy; brightness doesn't matter — need minimum frequency threshold" },
+          { q: "Which phenomenon REQUIRES the wave model?", choices: ["Photoelectric effect","Interference patterns","Emission of photons","All require wave model"], ans: 1, explain: "Interference (waves adding/canceling) requires the wave model" },
+        ]
+      },
+      {
+        id: "optics", title: "4. Optics: Mirrors & Lenses",
+        content: `Mirrors and lenses form images. The mirror/lens equation (1/F = 1/do + 1/di) and magnification (M = hi/ho = −di/do) describe image location and size. Sign conventions: real images have positive di, virtual negative. Converging (concave mirror, convex lens) have positive F; diverging (convex mirror, concave lens) have negative F.
+
+**Ray diagram rules:** Parallel ray reflects/refracts through focal point; Focal ray goes parallel; Vertex ray follows law of reflection (θi = θr).`,
+        formulas: [
+          { name: "Mirror/Lens Equation", eq: "1/F = 1/do + 1/di", vars: "F = focal length, do = object dist, di = image dist" },
+          { name: "Magnification", eq: "M = hi/ho = −di/do", vars: "|M|>1 enlarged, |M|<1 reduced" },
+          { name: "Reflection Law", eq: "θi = θr", vars: "Angle of incidence = angle of reflection" },
+        ],
+        flashcards: [
+          { q: "Sign of focal length for concave mirror?", a: "Positive (converging device)" },
+          { q: "Sign of focal length for convex mirror?", a: "Negative (diverging device)" },
+          { q: "When is image distance (di) negative?", a: "When the image is virtual" },
+          { q: "When is magnification greater than 1?", a: "When |M| > 1, the image is larger than the object" },
+          { q: "What is the law of reflection?", a: "Angle of incidence = angle of reflection (both measured from normal)" },
+          { q: "What does a converging lens do?", a: "Bends parallel rays through the far focal point (thicker in middle)" },
+        ],
+        quiz: [
+          { q: "do = 30cm, F = 10cm. Find di.", choices: ["7.5 cm","15 cm","60 cm","20 cm"], ans: 1, explain: "1/10 = 1/30 + 1/di; 1/di = 1/10 - 1/30 = 2/30; di = 15 cm" },
+          { q: "If di = −20cm, the image is:", choices: ["Real","Virtual","Inverted","At infinity"], ans: 1, explain: "Negative di means the image is virtual" },
+        ]
+      },
+      {
+        id: "digital-analog", title: "5. Digital vs Analog Signals",
+        content: `**Analog signals** are continuous with many possible values (e.g., vinyl record, old radio). **Digital signals** use discrete values (0s and 1s) (e.g., text message, digital photo). Digital is easier to store, copy, and transmit over long distances with error correction, but has risks like hacking, deletion, and compression artifacts. Analog suffers from noise buildup but can capture smooth changes.`,
+        flashcards: [
+          { q: "What is an analog signal?", a: "Continuous signal with many possible values (e.g., vinyl record, old radio)" },
+          { q: "What is a digital signal?", a: "Discrete values, usually 0s and 1s (e.g., text message, digital photo)" },
+          { q: "Advantage of digital signals?", a: "Easy to copy, store, send long distances, and repair errors" },
+          { q: "Disadvantage of digital signals?", a: "Can be deleted, stolen, hacked, or compressed/degraded" },
+          { q: "Disadvantage of analog signals?", a: "Noise builds up and degrades quality over time/distance" },
+        ],
+        quiz: [
+          { q: "A vinyl record is an example of:", choices: ["Digital signal","Analog signal","Electromagnetic signal","Binary signal"], ans: 1, explain: "Vinyl records store continuous analog waveforms" },
+          { q: "Which signal type uses 0s and 1s?", choices: ["Analog","Continuous","Digital","Acoustic"], ans: 2, explain: "Digital signals use discrete binary values: 0 and 1" },
+        ]
+      }
+    ]
+  },
+  bigbang: {
+    id: "bigbang", label: "Big Bang & Nuclear", icon: "💥", color: "#06b6d4",
+    topics: [
+      {
+        id: "big-bang", title: "1. Big Bang Theory & Evidence",
+        content: `The Big Bang theory states the universe began small, hot, and dense and is still expanding. **Three key pieces of evidence:** 1) Redshift of galaxies (universe expanding), 2) Hydrogen‑Helium ratio (~75% H, ~25% He) matches early universe nucleosynthesis, 3) Cosmic Microwave Background (CMB) – leftover radiation from the hot early universe.
+
+**Redshift:** Light from galaxies moving away is stretched to longer wavelengths (red). Blueshift = moving toward us. **Spectral lines** – unique fingerprints of elements. **CMB** – faint microwave radiation filling the universe. **Origin of elements:** Big Bang made H & He; stars fuse up to iron; supernovae create elements heavier than iron.`,
+        formulas: [],
+        flashcards: [
+          { q: "What does the Big Bang theory claim?", a: "The universe is expanding and was smaller, hotter, and denser in the past" },
+          { q: "What is redshift?", a: "Light from galaxies moving away is stretched to longer (redder) wavelengths" },
+          { q: "What does widespread redshift tell us?", a: "Nearly all galaxies are moving away → universe is expanding" },
+          { q: "What is blueshift?", a: "Light from objects moving TOWARD us is compressed to shorter (bluer) wavelengths" },
+          { q: "What is the Cosmic Microwave Background (CMB)?", a: "Faint microwave radiation filling the universe — leftover from the early hot universe" },
+          { q: "What is the H:He ratio in the universe?", a: "About 75% hydrogen and 25% helium — consistent with Big Bang nucleosynthesis" },
+          { q: "Where are elements heavier than iron formed?", a: "In supernova explosions" },
+        ],
+        quiz: [
+          { q: "Galaxy light is shifted toward longer wavelengths. This is:", choices: ["Blueshift — galaxy approaching","Redshift — galaxy receding","White light — no motion","Infrared — galaxy cooling"], ans: 1, explain: "Redshift = wavelengths stretched = galaxy moving away from us" },
+          { q: "CMB radiation is evidence that the early universe was:", choices: ["Cold and sparse","Hot and dense","Same as today","Made only of helium"], ans: 1, explain: "CMB is leftover thermal radiation from the early hot, dense universe" },
+          { q: "Elements up to iron are created by:", choices: ["Big Bang","Nuclear fission","Fusion in stars","Radioactive decay"], ans: 2, explain: "Stars fuse lighter elements up to iron, releasing electromagnetic energy" },
+          { q: "Where do elements heavier than iron form?", choices: ["In stars","During Big Bang","In supernova explosions","In black holes"], ans: 2, explain: "Extreme conditions during supernova explosions create elements heavier than iron" },
+        ]
+      },
+      {
+        id: "nuclear-decay", title: "2. Radioactive Decay (Alpha, Beta, Gamma)",
+        content: `Radioactive decay happens when an unstable nucleus releases particles or energy. **Alpha decay** (α): emits helium nucleus (2p+2n); atomic # −2, mass # −4. **Beta decay** (β⁻): neutron → proton + electron; atomic # +1, mass # unchanged. **Gamma decay** (γ): releases energy photon; no change in atomic or mass number. Mass defect → energy released via E=mc².
+
+**Forces in nucleus:** Electrostatic (proton‑proton repulsion) and Strong force (attractive, holds nucleons together). Unstable when forces unbalanced.
+
+**Example equations:**
+- α: ²³⁸U → ²³⁴Th + ⁴He
+- β⁻: ¹⁴C → ¹⁴N + e⁻
+- γ: ⁶⁰Co → ⁶⁰Co + γ`,
+        formulas: [
+          { name: "Einstein's Equation", eq: "E = mc²", vars: "Mass defect → energy released" },
+          { name: "Alpha Decay", eq: "AX → A-4Y + ⁴₂He", vars: "Atomic # −2, Mass # −4" },
+          { name: "Beta Decay", eq: "AX → AY + ⁰₋₁e", vars: "Atomic # +1, Mass # unchanged" },
+          { name: "Gamma Decay", eq: "AX → AX + γ", vars: "No change in atomic or mass number" },
+        ],
+        flashcards: [
+          { q: "What is alpha decay?", a: "Nucleus emits helium nucleus (2 protons + 2 neutrons): atomic # −2, mass # −4" },
+          { q: "What is beta decay?", a: "Neutron converts to proton + electron: atomic # +1, mass # unchanged" },
+          { q: "What is gamma decay?", a: "Nucleus releases excess energy as photon: NO change in atomic or mass number" },
+          { q: "What is the mass defect?", a: "Mass of reactants > mass of products; difference converted to energy: E = mc²" },
+          { q: "What forces act inside the nucleus?", a: "Electrostatic force (repels protons) and strong force (holds protons+neutrons together)" },
+        ],
+        quiz: [
+          { q: "U-238 undergoes alpha decay. Products are:", choices: ["U-234 + neutron","Th-234 + ⁴He","Th-236 + ⁴He","Pa-234 + electron"], ans: 1, explain: "Alpha decay: atomic # −2 (U→Th), mass # −4 (238→234)" },
+          { q: "C-14 undergoes beta decay. Product is:", choices: ["B-14","N-14","C-13","N-13"], ans: 1, explain: "Beta decay: neutron→proton, so atomic # +1 (C[6]→N[7]), mass unchanged" },
+          { q: "Gamma decay changes the atomic number by:", choices: ["+2","−2","+1","0"], ans: 3, explain: "Gamma decay only releases energy — no change to proton or neutron count" },
+        ]
+      },
+      {
+        id: "fission-fusion", title: "3. Fission vs Fusion",
+        content: `**Fission:** Heavy nucleus splits into two lighter nuclei (e.g., U‑235 + n → fission products + neutrons + energy). Chain reaction possible. Controllable in nuclear reactors. Produces radioactive waste. **Fusion:** Two small nuclei combine to form a heavier nucleus (e.g., ²H + ³H → ⁴He + n + energy). Occurs in stars under extreme heat/pressure. Not yet controllable for energy. Fusion releases more energy per mass than fission and produces no long‑term waste.`,
+        formulas: [
+          { name: "Energy from Mass", eq: "E = mc²", vars: "c = 3×10⁸ m/s, mass in kg, E in joules" },
+        ],
+        flashcards: [
+          { q: "What is nuclear fission?", a: "Heavy nucleus splits into two lighter nuclei — chain reaction possible" },
+          { q: "What is nuclear fusion?", a: "Two small nuclei combine to form a heavier nucleus — occurs in stars" },
+          { q: "Which process is currently controllable for energy?", a: "Fission — used in nuclear power plants" },
+          { q: "Which produces more energy?", a: "Fusion releases even more energy than fission" },
+          { q: "Disadvantage of fission vs fusion?", a: "Fission produces radioactive nuclear waste; fusion does not" },
+        ],
+        quiz: [
+          { q: "Nuclear fission involves:", choices: ["Combining two small nuclei","Splitting a heavy nucleus","Neutron becoming proton","Electron emission"], ans: 1, explain: "Fission = splitting a heavy nucleus (like U-235) into smaller nuclei + neutrons + energy" },
+          { q: "Fusion occurs in stars primarily because:", choices: ["Stars have magnets","Stars have extreme temperature and pressure","Stars have fission reactors","Stars cool the nuclei"], ans: 1, explain: "Fusion requires extreme heat and pressure to overcome electrostatic repulsion" },
+          { q: "²H + ³H → ⁴He + ¹n + energy. This is:", choices: ["Alpha decay","Fission","Fusion","Beta decay"], ans: 2, explain: "Two small nuclei combine → heavier nucleus = fusion" },
+        ]
+      }
+    ]
+  }
+};
+
+// --- Build global flashcards and quiz banks (includes all PDF questions) ---
+const ALL_FLASHCARDS = [];
+const ALL_QUIZ = [];
+Object.values(UNITS).forEach(unit => {
+  unit.topics.forEach(topic => {
+    topic.flashcards?.forEach(f => ALL_FLASHCARDS.push({ ...f, unit: unit.label, topic: topic.title }));
+    topic.quiz?.forEach(q => ALL_QUIZ.push({ ...q, unit: unit.label, topic: topic.title }));
+  });
+});
+
+// Add the 15 practice questions from Forces PDF (Cluster 1–5) that are not already included
+const extraForcesQuiz = [
+  { q: "Which two trials best show increasing net force increases acceleration when mass is constant? (Trial1: 2kg,4N,2m/s²; Trial2:2kg,8N,4m/s²; Trial3:4kg,8N,2m/s²; Trial4:4kg,12N,3m/s²)", choices: ["1&2","2&3","3&4","1&3"], ans: 0, explain: "Trials 1 and 2 have same mass (2kg) but different net force, acceleration changes proportionally.", unit: "Forces & Interactions", topic: "Newton's Laws" },
+  { q: "Calculate the acceleration of a 5.0 kg cart if the net force is 15 N", choices: ["3 m/s²","75 m/s²","0.33 m/s²","10 m/s²"], ans: 0, explain: "a = F/m = 15/5 = 3 m/s²", unit: "Forces & Interactions", topic: "Newton's Laws" },
+  { q: "Use evidence from the table to support Newton's Second Law. (Table shows Fnet doubles, a doubles when m constant)", choices: ["Force and acceleration are unrelated","Acceleration is inversely proportional to net force","Acceleration is directly proportional to net force when mass constant","Mass changes with force"], ans: 2, explain: "When mass constant, doubling net force doubles acceleration, showing a ∝ Fnet.", unit: "Forces & Interactions", topic: "Newton's Laws" },
+  { q: "Two carts collide and stick. Cart A: 1.5 kg at +4.0 m/s, Cart B: 1.0 kg at -2.0 m/s. Total momentum before collision?", choices: ["6.0 kg·m/s","4.0 kg·m/s","8.0 kg·m/s","2.0 kg·m/s"], ans: 1, explain: "p = (1.5)(4)+(1)(-2)=6-2=4 kg·m/s", unit: "Forces & Interactions", topic: "Momentum & Collisions" },
+  { q: "Final velocity of the stuck-together carts from previous problem?", choices: ["+2.0 m/s","+1.6 m/s","+4.0 m/s","0 m/s"], ans: 1, explain: "vf = p_total / (1.5+1) = 4/2.5 = 1.6 m/s", unit: "Forces & Interactions", topic: "Momentum & Collisions" },
+  { q: "Why is using positive/negative signs important in momentum problems?", choices: ["It makes numbers smaller","It shows direction","It is required for kinetic energy","It simplifies mass"], ans: 1, explain: "Momentum is a vector; signs indicate direction (e.g., left/right).", unit: "Forces & Interactions", topic: "Momentum & Collisions" },
+  { q: "Helmet liners: Liner A (0.010s, 800N), B (0.020s,430N), C (0.035s,260N). Which best reduces max force?", choices: ["A","B","C","All same"], ans: 2, explain: "Longest impact time gives lowest force (260 N).", unit: "Forces & Interactions", topic: "Impulse" },
+  { q: "Explain why increasing impact time lowers average force for same momentum change.", choices: ["Force = Δp/Δt → larger Δt gives smaller F","Force = m·a → time doesn't matter","Impulse decreases","Momentum changes less"], ans: 0, explain: "From F = Δp/Δt, for constant Δp, increasing Δt decreases F.", unit: "Forces & Interactions", topic: "Impulse" },
+  { q: "Trade-off for using helmet liner C (highest cost, lowest force)?", choices: ["Lower mass","Higher cost","Shorter impact time","Less protection"], ans: 1, explain: "Liner C costs $35 vs $12 and $18, so cost is a trade-off for better force reduction.", unit: "Forces & Interactions", topic: "Impulse" },
+  { q: "If distance between two masses is doubled, gravitational force becomes:", choices: ["2×","½×","4×","¼×"], ans: 3, explain: "Inverse square: (2r)² = 4r² → F/4", unit: "Forces & Interactions", topic: "Field Forces" },
+  { q: "Two charges are both negative. Electrostatic force is:", choices: ["Attractive","Repulsive","Zero","Dependent on mass"], ans: 1, explain: "Like charges repel.", unit: "Forces & Interactions", topic: "Field Forces" },
+  { q: "Why does changing distance between interacting objects change system energy?", choices: ["Force changes, work is done","Mass changes","Temperature changes","Speed is constant"], ans: 0, explain: "Work done against or by the field changes potential energy.", unit: "Forces & Interactions", topic: "Field Forces" },
+  { q: "What observation provides evidence that electric current produces a magnetic field?", choices: ["Compass deflects when current flows","Ammeter reads zero","Bulb lights up","Wire gets hot"], ans: 0, explain: "Compass deflection indicates a magnetic field around current‑carrying wire.", unit: "Forces & Interactions", topic: "Electromagnetism" },
+  { q: "What observation shows a changing magnetic field produces an electric current?", choices: ["Moving magnet into coil makes ammeter deflect","Compass deflects near battery","Wire heats up","Voltage is constant"], ans: 0, explain: "Induced current is detected by ammeter when magnet moves.", unit: "Forces & Interactions", topic: "Electromagnetism" },
+  { q: "Identify one controlled variable for the current‑and‑compass investigation.", choices: ["Type of wire","Number of batteries (if testing current)","Distance from compass","All of the above"], ans: 3, explain: "To test cause‑effect, keep everything else constant except the independent variable (current).", unit: "Forces & Interactions", topic: "Electromagnetism" }
+];
+extraForcesQuiz.forEach(q => ALL_QUIZ.push(q));
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ---- SIMULATIONS ----
+function EnergyBarSim() {
+  const [height, setHeight] = useState(50);
+  const mass = 2;
+  const g = 9.81;
+  const totalH = 50;
+  const pe = mass * g * height;
+  const totalE = mass * g * totalH;
+  const ke = totalE - pe;
+  const pePct = (pe / totalE) * 100;
+  const kePct = (ke / totalE) * 100;
+  return (
+    <div style={{ padding: "1rem 0" }}>
+      <p style={{ fontSize: 13, color: "var(--color-text-secondary)", marginBottom: 8 }}>
+        2 kg ball falling — drag slider to change height
+      </p>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+        <span style={{ fontSize: 13, color: "var(--color-text-secondary)", minWidth: 60 }}>Height</span>
+        <input type="range" min="0" max="50" value={height} onChange={e => setHeight(+e.target.value)} style={{ flex: 1 }} />
+        <span style={{ fontSize: 13, fontWeight: 500, minWidth: 40 }}>{height} m</span>
+      </div>
+      <div style={{ display: "flex", gap: 24, alignItems: "flex-end", height: 160, marginBottom: 12 }}>
+        {[
+          { label: "PEg", val: pe, pct: pePct, color: "#f59e0b" },
+          { label: "KE", val: ke, pct: kePct, color: "#ef4444" },
+          { label: "Total ME", val: totalE, pct: 100, color: "#8b5cf6" }
+        ].map(bar => (
+          <div key={bar.label} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+            <span style={{ fontSize: 11, color: "var(--color-text-secondary)" }}>{bar.val.toFixed(0)} J</span>
+            <div style={{ width: "100%", height: 120, background: "var(--color-background-secondary)", borderRadius: 4, position: "relative", border: "0.5px solid var(--color-border-tertiary)", overflow: "hidden" }}>
+              <div style={{ position: "absolute", bottom: 0, width: "100%", height: `${bar.pct}%`, background: bar.color, transition: "height 0.2s", borderRadius: "4px 4px 0 0" }} />
+            </div>
+            <span style={{ fontSize: 12, fontWeight: 500 }}>{bar.label}</span>
+          </div>
+        ))}
+      </div>
+      <p style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>
+        As height decreases, PEg converts to KE — total ME stays constant at {totalE.toFixed(0)} J
+      </p>
+    </div>
+  );
+}
+
+function OhmsLawSim() {
+  const [voltage, setVoltage] = useState(12);
+  const [resistance, setResistance] = useState(6);
+  const current = voltage / resistance;
+  const power = voltage * current;
+  return (
+    <div style={{ padding: "1rem 0" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+        <span style={{ fontSize: 13, color: "var(--color-text-secondary)", minWidth: 80 }}>Voltage (V)</span>
+        <input type="range" min="1" max="24" value={voltage} onChange={e => setVoltage(+e.target.value)} style={{ flex: 1 }} />
+        <span style={{ fontSize: 13, fontWeight: 500, minWidth: 40 }}>{voltage} V</span>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+        <span style={{ fontSize: 13, color: "var(--color-text-secondary)", minWidth: 80 }}>Resistance (Ω)</span>
+        <input type="range" min="1" max="20" value={resistance} onChange={e => setResistance(+e.target.value)} style={{ flex: 1 }} />
+        <span style={{ fontSize: 13, fontWeight: 500, minWidth: 40 }}>{resistance} Ω</span>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+        {[
+          { label: "Current", val: current.toFixed(2) + " A", color: "#ef4444" },
+          { label: "Power", val: power.toFixed(1) + " W", color: "#f59e0b" },
+          { label: "V = IR check", val: `${voltage} = ${current.toFixed(2)}×${resistance}`, color: "#8b5cf6" }
+        ].map(m => (
+          <div key={m.label} style={{ background: "var(--color-background-secondary)", borderRadius: 8, padding: "12px", border: "0.5px solid var(--color-border-tertiary)", textAlign: "center" }}>
+            <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginBottom: 4 }}>{m.label}</div>
+            <div style={{ fontSize: 18, fontWeight: 500, color: m.color }}>{m.val}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function WaveSim() {
+  const [freq, setFreq] = useState(2);
+  const [amp, setAmp] = useState(40);
+  const speed = 300;
+  const wavelength = speed / freq;
+  const period = 1 / freq;
+  const points = [];
+  for (let x = 0; x <= 400; x += 2) {
+    const y = 60 + amp * Math.sin((2 * Math.PI * x) / (wavelength / 1));
+    points.push(`${x},${y}`);
+  }
+  return (
+    <div style={{ padding: "1rem 0" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+        <span style={{ fontSize: 13, color: "var(--color-text-secondary)", minWidth: 80 }}>Frequency</span>
+        <input type="range" min="1" max="8" value={freq} onChange={e => setFreq(+e.target.value)} style={{ flex: 1 }} />
+        <span style={{ fontSize: 13, fontWeight: 500, minWidth: 50 }}>{freq} Hz</span>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+        <span style={{ fontSize: 13, color: "var(--color-text-secondary)", minWidth: 80 }}>Amplitude</span>
+        <input type="range" min="10" max="55" value={amp} onChange={e => setAmp(+e.target.value)} style={{ flex: 1 }} />
+        <span style={{ fontSize: 13, fontWeight: 500, minWidth: 50 }}>{amp} m</span>
+      </div>
+      <svg width="100%" viewBox="0 0 400 120" style={{ border: "0.5px solid var(--color-border-tertiary)", borderRadius: 8, background: "var(--color-background-secondary)" }}>
+        <line x1="0" y1="60" x2="400" y2="60" stroke="var(--color-border-secondary)" strokeDasharray="4,4" />
+        <polyline points={points.join(" ")} fill="none" stroke="#8b5cf6" strokeWidth="2" />
+      </svg>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginTop: 12 }}>
+        {[
+          { label: "Speed", val: speed + " m/s" },
+          { label: "Wavelength (λ = v/f)", val: wavelength.toFixed(1) + " m" },
+          { label: "Period (T = 1/f)", val: period.toFixed(2) + " s" }
+        ].map(m => (
+          <div key={m.label} style={{ background: "var(--color-background-secondary)", borderRadius: 8, padding: "10px", border: "0.5px solid var(--color-border-tertiary)", textAlign: "center" }}>
+            <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginBottom: 2 }}>{m.label}</div>
+            <div style={{ fontSize: 15, fontWeight: 500 }}>{m.val}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ProjectileSim() {
+  const [angle, setAngle] = useState(45);
+  const [speed, setSpeed] = useState(20);
+  const g = 9.81;
+  const rad = (angle * Math.PI) / 180;
+  const vx = speed * Math.cos(rad);
+  const vy = speed * Math.sin(rad);
+  const tFlight = (2 * vy) / g;
+  const range = vx * tFlight;
+  const maxH = (vy * vy) / (2 * g);
+  const pts = [];
+  for (let t = 0; t <= tFlight; t += tFlight / 60) {
+    const x = (vx * t / range) * 380;
+    const y = 100 - ((vy * t - 0.5 * g * t * t) / maxH) * 90;
+    pts.push(`${x + 10},${y}`);
+  }
+  return (
+    <div style={{ padding: "1rem 0" }}>
+      <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+            <span style={{ fontSize: 13, color: "var(--color-text-secondary)", minWidth: 60 }}>Angle</span>
+            <input type="range" min="10" max="80" value={angle} onChange={e => setAngle(+e.target.value)} style={{ flex: 1 }} />
+            <span style={{ fontSize: 13, fontWeight: 500, minWidth: 35 }}>{angle}°</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 13, color: "var(--color-text-secondary)", minWidth: 60 }}>Speed</span>
+            <input type="range" min="5" max="40" value={speed} onChange={e => setSpeed(+e.target.value)} style={{ flex: 1 }} />
+            <span style={{ fontSize: 13, fontWeight: 500, minWidth: 50 }}>{speed} m/s</span>
+          </div>
+        </div>
+      </div>
+      <svg width="100%" viewBox="0 0 400 110" style={{ border: "0.5px solid var(--color-border-tertiary)", borderRadius: 8, background: "var(--color-background-secondary)" }}>
+        <line x1="10" y1="100" x2="390" y2="100" stroke="var(--color-border-secondary)" strokeWidth="1" />
+        {pts.length > 1 && <polyline points={pts.join(" ")} fill="none" stroke="#ef4444" strokeWidth="2" />}
+      </svg>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8, marginTop: 12 }}>
+        {[
+          { label: "vx (m/s)", val: vx.toFixed(1) },
+          { label: "vy (m/s)", val: vy.toFixed(1) },
+          { label: "Range (m)", val: range.toFixed(1) },
+          { label: "Max Height (m)", val: maxH.toFixed(1) }
+        ].map(m => (
+          <div key={m.label} style={{ background: "var(--color-background-secondary)", borderRadius: 8, padding: "10px", border: "0.5px solid var(--color-border-tertiary)", textAlign: "center" }}>
+            <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginBottom: 2 }}>{m.label}</div>
+            <div style={{ fontSize: 15, fontWeight: 500 }}>{m.val}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const SIMULATIONS = [
+  { id: "energy-bar", title: "Energy Bar Charts", desc: "Watch PEg convert to KE as an object falls", component: EnergyBarSim, icon: "⚡" },
+  { id: "ohms-law", title: "Ohm's Law Calculator", desc: "Adjust voltage and resistance to see current and power", component: OhmsLawSim, icon: "🔋" },
+  { id: "wave", title: "Wave Properties", desc: "Adjust frequency and amplitude to see how waves change", component: WaveSim, icon: "🌊" },
+  { id: "projectile", title: "Projectile Motion", desc: "Launch angle and speed to see trajectory", component: ProjectileSim, icon: "🎯" },
+];
+
+// ---- AI TUTOR COMPONENT ----
+function AITutor() {
+  const [messages, setMessages] = useState([
+    { role: "assistant", content: "Hi! I'm your Physics Regents tutor. Ask me anything about energy, forces, waves, or the Big Bang. I can explain concepts, work through problems, or generate practice questions!" }
+  ]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const bottomRef = useRef(null);
+
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+
+  const SYSTEM = `You are an expert Physics Regents tutor for Ms. Wang's class. You know all content from these review packets:
+
+ENERGY (HS-PS3-1 to HS-PS3-6): KE=½mv², PEg=mgΔh, PEs=½kx², ME=KE+PE, W=Fd, P=W/t, Q=mcΔT, V=IR, P=VI=I²R, efficiency=(output/input)×100%, series and parallel circuits.
+
+FORCES (HS-PS2-1 to HS-PS2-5): F_net=ma, Fg=mg, p=mv, J=FΔt=Δp, Fg=Gm₁m₂/r², Fe=kq₁q₂/r², Fc=mv²/r, kinematics (vf=vi+at, d=vit+½at², vf²=vi²+2ad), Newton's 3 laws, collision types, impulse and safety devices, electromagnetism.
+
+WAVES (HS-PS4-1 to HS-PS4-6): v=fλ, T=1/f, E=hf, n=c/v, Snell's law, 1/F=1/do+1/di, M=hi/ho=-di/do, EM spectrum, wave-particle duality, photoelectric effect, digital vs analog, refraction, reflection.
+
+BIG BANG & NUCLEAR (HS-ESS1-2, HS-PS1-8): redshift evidence, CMB, H-He ratio, alpha/beta/gamma decay, E=mc², fission vs fusion.
+
+Be concise, use examples, show worked steps for calculations. Always ask if they want more practice.`;
+
+  const send = async () => {
+    if (!input.trim() || loading) return;
+    const userMsg = { role: "user", content: input };
+    setMessages(m => [...m, userMsg]);
+    setInput("");
+    setLoading(true);
+    try {
+      // Uncomment and add your API key to enable real AI responses
+      /*
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "x-api-key": "YOUR_API_KEY",
+          "anthropic-version": "2023-06-01"
+        },
+        body: JSON.stringify({
+          model: "claude-3-sonnet-20240229",
+          max_tokens: 1000,
+          system: SYSTEM,
+          messages: [...messages, userMsg].map(m => ({ role: m.role, content: m.content }))
+        })
+      });
+      const data = await res.json();
+      const reply = data.content?.[0]?.text || "Sorry, I couldn't respond. Try again.";
+      setMessages(m => [...m, { role: "assistant", content: reply }]);
+      */
+      // Simulated response (remove when API key added)
+      setMessages(m => [...m, { role: "assistant", content: "This is a simulated response. To get real AI answers, add your Anthropic API key in the AITutor component." }]);
+    } catch {
+      setMessages(m => [...m, { role: "assistant", content: "Connection error. Please try again." }]);
+    }
+    setLoading(false);
+  };
+
+  const suggestions = [
+    "Explain conservation of momentum with an example",
+    "How do I solve optics problems with mirrors?",
+    "What is the difference between fission and fusion?",
+    "Give me a practice problem on Ohm's Law",
+    "Explain the photoelectric effect",
+    "How does redshift prove the Big Bang?",
+  ];
+
+  return (
+    <div>
+      <h1 style={{ fontSize: 22, fontWeight: 500, marginBottom: 4 }}>AI Tutor</h1>
+      <p style={{ color: "var(--color-text-secondary)", fontSize: 14, marginBottom: 16 }}>Powered by Claude · Ask anything about Regents Physics</p>
+
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 }}>
+        {suggestions.map(s => (
+          <button key={s} onClick={() => { setInput(s); }}
+            style={{ padding: "6px 12px", borderRadius: 20, border: "0.5px solid var(--color-border-tertiary)", background: "transparent", cursor: "pointer", fontSize: 12, color: "var(--color-text-secondary)" }}>
+            {s}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ background: "var(--color-background-primary)", borderRadius: "var(--border-radius-lg)", border: "0.5px solid var(--color-border-tertiary)", padding: "1rem", minHeight: 300, maxHeight: 450, overflowY: "auto", marginBottom: 12 }}>
+        {messages.map((m, i) => (
+          <div key={i} style={{ marginBottom: 16, display: "flex", flexDirection: m.role === "user" ? "row-reverse" : "row", gap: 8 }}>
+            <div style={{ fontSize: 20, flexShrink: 0 }}>{m.role === "user" ? "👤" : "🤖"}</div>
+            <div style={{ background: m.role === "user" ? "var(--color-background-info)" : "var(--color-background-secondary)", borderRadius: "var(--border-radius-md)", padding: "10px 14px", maxWidth: "85%", fontSize: 14, lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
+              {m.content}
+            </div>
+          </div>
+        ))}
+        {loading && (
+          <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+            <div style={{ fontSize: 20 }}>🤖</div>
+            <div style={{ background: "var(--color-background-secondary)", borderRadius: "var(--border-radius-md)", padding: "10px 14px", fontSize: 14, color: "var(--color-text-secondary)" }}>
+              Thinking...
+            </div>
+          </div>
+        )}
+        <div ref={bottomRef} />
+      </div>
+
+      <div style={{ display: "flex", gap: 8 }}>
+        <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && send()}
+          placeholder="Ask about any Regents physics concept..."
+          style={{ flex: 1, padding: "10px 14px", borderRadius: "var(--border-radius-md)", border: "0.5px solid var(--color-border-secondary)", background: "var(--color-background-primary)", fontSize: 14 }} />
+        <button onClick={send} disabled={loading || !input.trim()}
+          style={{ padding: "10px 20px", borderRadius: "var(--border-radius-md)", border: "0.5px solid var(--color-border-secondary)", background: "transparent", cursor: "pointer", fontSize: 14, fontWeight: 500, opacity: loading || !input.trim() ? 0.5 : 1 }}>
+          Send ↗
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ---- MAIN APP ----
+export default function App() {
+  const [page, setPage] = useState("dashboard");
+  const [activeUnit, setActiveUnit] = useState("energy");
+  const [activeTopic, setActiveTopic] = useState(null);
+  const [xp, setXp] = useState(() => parseInt(localStorage?.getItem?.("xp") || "0") || 0);
+  const [completed, setCompleted] = useState(() => {
+    try { return JSON.parse(localStorage?.getItem?.("completed") || "{}"); } catch { return {}; }
+  });
+  const [streak, setStreak] = useState(3);
+  const [fcIndex, setFcIndex] = useState(0);
+  const [fcFlipped, setFcFlipped] = useState(false);
+  const [fcDeck, setFcDeck] = useState(() => shuffle(ALL_FLASHCARDS));
+  const [fcFilter, setFcFilter] = useState("all");
+  const [quizActive, setQuizActive] = useState(false);
+  const [quizDeck, setQuizDeck] = useState([]);
+  const [quizIndex, setQuizIndex] = useState(0);
+  const [quizSelected, setQuizSelected] = useState(null);
+  const [quizScore, setQuizScore] = useState(0);
+  const [quizDone, setQuizDone] = useState(false);
+  const [simActive, setSimActive] = useState(null);
+  const [examMode, setExamMode] = useState(false);
+  const [examAnswers, setExamAnswers] = useState({});
+  const [examSubmitted, setExamSubmitted] = useState(false);
+  const [examDeck] = useState(() => shuffle(ALL_QUIZ).slice(0, 20));
+  const [examTime, setExamTime] = useState(1800);
+  const timerRef = useRef(null);
+
+  useEffect(() => {
+    if (examMode && !examSubmitted) {
+      timerRef.current = setInterval(() => setExamTime(t => t > 0 ? t - 1 : 0), 1000);
+      return () => clearInterval(timerRef.current);
+    }
+  }, [examMode, examSubmitted]);
+
+  const addXp = (amount) => {
+    setXp(prev => {
+      const next = prev + amount;
+      try { localStorage?.setItem?.("xp", String(next)); } catch {}
+      return next;
+    });
+  };
+
+  const markComplete = (key) => {
+    setCompleted(prev => {
+      const next = { ...prev, [key]: true };
+      try { localStorage?.setItem?.("completed", JSON.stringify(next)); } catch {}
+      return next;
+    });
+  };
+
+  const level = Math.floor(xp / 100) + 1;
+  const xpToNext = 100 - (xp % 100);
+  const totalTopics = Object.values(UNITS).reduce((s, u) => s + u.topics.length, 0);
+  const completedCount = Object.keys(completed).length;
+
+  const navItems = [
+    { id: "dashboard", label: "Dashboard", icon: "🏠" },
+    { id: "learn", label: "Learn", icon: "📖" },
+    { id: "simulations", label: "Simulations", icon: "🔬" },
+    { id: "flashcards", label: "Flashcards", icon: "🃏" },
+    { id: "quiz", label: "Quiz", icon: "❓" },
+    { id: "exam", label: "Exam Mode", icon: "📝" },
+    { id: "formulas", label: "Formulas", icon: "📐" },
+    { id: "ai-tutor", label: "AI Tutor", icon: "🤖" },
+  ];
+
+  const startQuiz = (filter = "all") => {
+    let pool = ALL_QUIZ;
+    if (filter !== "all") pool = ALL_QUIZ.filter(q => q.unit === filter);
+    setQuizDeck(shuffle(pool).slice(0, 10));
+    setQuizIndex(0);
+    setQuizSelected(null);
+    setQuizScore(0);
+    setQuizDone(false);
+    setQuizActive(true);
+    setPage("quiz");
+  };
+
+  const handleQuizAnswer = (idx) => {
+    if (quizSelected !== null) return;
+    setQuizSelected(idx);
+    if (idx === quizDeck[quizIndex].ans) {
+      setQuizScore(s => s + 1);
+      addXp(10);
+    }
+  };
+
+  const nextQuestion = () => {
+    if (quizIndex + 1 >= quizDeck.length) {
+      setQuizDone(true);
+      addXp(20);
+      markComplete(`quiz-${Date.now()}`);
+    } else {
+      setQuizIndex(i => i + 1);
+      setQuizSelected(null);
+    }
+  };
+
+  const submitExam = () => {
+    clearInterval(timerRef.current);
+    setExamSubmitted(true);
+    const correct = examDeck.filter((q, i) => examAnswers[i] === q.ans).length;
+    addXp(correct * 15);
+  };
+
+  const formatTime = (s) => `${Math.floor(s/60).toString().padStart(2,"0")}:${(s%60).toString().padStart(2,"0")}`;
+
+  const allFormulas = [];
+  Object.values(UNITS).forEach(unit => {
+    unit.topics.forEach(topic => {
+      topic.formulas?.forEach(f => allFormulas.push({ ...f, unit: unit.label, topic: topic.title }));
+    });
+  });
+
+  // ---- RENDER ----
+  return (
+    <div style={{ minHeight: "100vh", background: "var(--color-background-tertiary)", fontFamily: "var(--font-sans)" }}>
+      <h2 className="sr-only">Physics Regents Study Platform — all units, formulas, simulations, and practice</h2>
+
+      {/* HEADER */}
+      <div style={{ background: "var(--color-background-primary)", borderBottom: "0.5px solid var(--color-border-tertiary)", padding: "0 1.5rem", display: "flex", alignItems: "center", gap: 16, position: "sticky", top: 0, zIndex: 100 }}>
+        <div style={{ padding: "12px 0", display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontSize: 20 }}>⚛️</span>
+          <span style={{ fontWeight: 500, fontSize: 16 }}>Physics Regents Prep</span>
+        </div>
+        <div style={{ flex: 1, overflowX: "auto", display: "flex", gap: 4, padding: "8px 0" }}>
+          {navItems.map(n => (
+            <button key={n.id} onClick={() => { setPage(n.id); setQuizActive(false); }}
+              style={{ padding: "6px 12px", borderRadius: "var(--border-radius-md)", border: page === n.id ? "2px solid var(--color-border-info)" : "0.5px solid var(--color-border-tertiary)", background: page === n.id ? "var(--color-background-info)" : "transparent", color: page === n.id ? "var(--color-text-info)" : "var(--color-text-secondary)", fontSize: 13, cursor: "pointer", whiteSpace: "nowrap" }}>
+              {n.icon} {n.label}
+            </button>
+          ))}
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
+          <div style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>🔥 {streak} day streak</div>
+          <div style={{ background: "var(--color-background-secondary)", borderRadius: 20, padding: "4px 12px", fontSize: 12, fontWeight: 500 }}>
+            Lv.{level} · {xp} XP
+          </div>
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "1.5rem 1rem" }}>
+
+        {/* DASHBOARD */}
+        {page === "dashboard" && (
+          <div>
+            <div style={{ marginBottom: 24 }}>
+              <h1 style={{ fontSize: 22, fontWeight: 500, marginBottom: 4 }}>Your study dashboard</h1>
+              <p style={{ color: "var(--color-text-secondary)", fontSize: 14 }}>Covering all 4 Regents units from Ms. Wang's review packets</p>
+            </div>
+
+            {/* Embedded Video */}
+            <div style={{ marginBottom: 24, background: "var(--color-background-primary)", borderRadius: "var(--border-radius-lg)", border: "0.5px solid var(--color-border-tertiary)", overflow: "hidden" }}>
+              <div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
+                <iframe 
+                  src="https://www.youtube.com/embed/IYruBR8nDjk" 
+                  title="June 2026 Ultimate Regents Physics Review | EVERYTHING YOU NEED TO KNOW"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                  style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
+                ></iframe>
+              </div>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12, marginBottom: 24 }}>
+              {[
+                { label: "XP Earned", val: xp, icon: "⭐" },
+                { label: "Level", val: level, icon: "🏆" },
+                { label: "Topics Completed", val: `${Math.min(completedCount, totalTopics)}/${totalTopics}`, icon: "✅" },
+                { label: "XP to Next Level", val: xpToNext, icon: "⬆️" },
+              ].map(m => (
+                <div key={m.label} style={{ background: "var(--color-background-secondary)", borderRadius: "var(--border-radius-md)", padding: "1rem", textAlign: "center" }}>
+                  <div style={{ fontSize: 20, marginBottom: 4 }}>{m.icon}</div>
+                  <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginBottom: 4 }}>{m.label}</div>
+                  <div style={{ fontSize: 22, fontWeight: 500 }}>{m.val}</div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ background: "var(--color-background-primary)", borderRadius: "var(--border-radius-lg)", border: "0.5px solid var(--color-border-tertiary)", padding: "1rem 1.25rem", marginBottom: 24 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                <span style={{ fontSize: 14, fontWeight: 500 }}>Level {level} progress</span>
+                <span style={{ fontSize: 13, color: "var(--color-text-secondary)" }}>{xp % 100}/100 XP</span>
+              </div>
+              <div style={{ height: 8, background: "var(--color-background-secondary)", borderRadius: 4, overflow: "hidden" }}>
+                <div style={{ height: "100%", width: `${xp % 100}%`, background: "#f59e0b", borderRadius: 4, transition: "width 0.3s" }} />
+              </div>
+            </div>
+
+            <h2 style={{ fontSize: 16, fontWeight: 500, marginBottom: 12 }}>Units</h2>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginBottom: 24 }}>
+              {Object.values(UNITS).map(unit => (
+                <div key={unit.id} onClick={() => { setPage("learn"); setActiveUnit(unit.id); setActiveTopic(null); }}
+                  style={{ background: "var(--color-background-primary)", borderRadius: "var(--border-radius-lg)", border: "0.5px solid var(--color-border-tertiary)", padding: "1.25rem", cursor: "pointer" }}>
+                  <div style={{ fontSize: 28, marginBottom: 8 }}>{unit.icon}</div>
+                  <div style={{ fontWeight: 500, marginBottom: 4 }}>{unit.label}</div>
+                  <div style={{ fontSize: 13, color: "var(--color-text-secondary)", marginBottom: 8 }}>{unit.topics.length} topics</div>
+                  <div style={{ height: 4, background: "var(--color-background-secondary)", borderRadius: 2, overflow: "hidden" }}>
+                    <div style={{ height: "100%", width: `${(unit.topics.filter(t => completed[`${unit.id}-${t.id}`]).length / unit.topics.length) * 100}%`, background: unit.color, borderRadius: 2 }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <h2 style={{ fontSize: 16, fontWeight: 500, marginBottom: 12 }}>Quick actions</h2>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12 }}>
+              {[
+                { label: "Random flashcards", action: () => { setFcDeck(shuffle(ALL_FLASHCARDS)); setFcIndex(0); setFcFlipped(false); setPage("flashcards"); }, icon: "🃏" },
+                { label: "Quick quiz (all units)", action: () => startQuiz("all"), icon: "❓" },
+                { label: "Practice exam", action: () => { setExamMode(true); setPage("exam"); }, icon: "📝" },
+                { label: "View all formulas", action: () => setPage("formulas"), icon: "📐" },
+                { label: "Simulations", action: () => setPage("simulations"), icon: "🔬" },
+                { label: "AI Tutor", action: () => setPage("ai-tutor"), icon: "🤖" },
+              ].map(a => (
+                <button key={a.label} onClick={a.action}
+                  style={{ background: "var(--color-background-primary)", borderRadius: "var(--border-radius-lg)", border: "0.5px solid var(--color-border-tertiary)", padding: "1rem", cursor: "pointer", textAlign: "left", display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontSize: 20 }}>{a.icon}</span>
+                  <span style={{ fontSize: 13, fontWeight: 500 }}>{a.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* LEARN */}
+        {page === "learn" && (
+          <div style={{ display: "grid", gridTemplateColumns: activeTopic ? "220px 1fr" : "1fr", gap: 16 }}>
+            <div>
+              <h2 style={{ fontSize: 16, fontWeight: 500, marginBottom: 12 }}>Units & Topics</h2>
+              {Object.values(UNITS).map(unit => (
+                <div key={unit.id} style={{ marginBottom: 16 }}>
+                  <button onClick={() => { setActiveUnit(unit.id === activeUnit ? null : unit.id); setActiveTopic(null); }}
+                    style={{ width: "100%", background: activeUnit === unit.id ? "var(--color-background-info)" : "var(--color-background-secondary)", border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-md)", padding: "10px 12px", cursor: "pointer", textAlign: "left", display: "flex", alignItems: "center", gap: 8, fontWeight: 500, fontSize: 14, color: activeUnit === unit.id ? "var(--color-text-info)" : "var(--color-text-primary)" }}>
+                    <span>{unit.icon}</span>{unit.label}
+                  </button>
+                  {activeUnit === unit.id && (
+                    <div style={{ marginTop: 4 }}>
+                      {unit.topics.map(topic => (
+                        <button key={topic.id} onClick={() => { setActiveTopic(topic); markComplete(`${unit.id}-${topic.id}`); addXp(5); }}
+                          style={{ width: "100%", background: activeTopic?.id === topic.id ? "var(--color-background-primary)" : "transparent", border: activeTopic?.id === topic.id ? "0.5px solid var(--color-border-secondary)" : "none", borderRadius: "var(--border-radius-md)", padding: "8px 12px 8px 24px", cursor: "pointer", textAlign: "left", fontSize: 13, color: completed[`${unit.id}-${topic.id}`] ? "var(--color-text-success)" : "var(--color-text-secondary)", display: "flex", alignItems: "center", gap: 6 }}>
+                          {completed[`${unit.id}-${topic.id}`] ? "✅" : "○"} {topic.title}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {activeTopic ? (
+              <div>
+                <div style={{ background: "var(--color-background-primary)", borderRadius: "var(--border-radius-lg)", border: "0.5px solid var(--color-border-tertiary)", padding: "1.5rem", marginBottom: 16 }}>
+                  <h1 style={{ fontSize: 20, fontWeight: 500, marginBottom: 12 }}>{activeTopic.title}</h1>
+                  <p style={{ fontSize: 14, lineHeight: 1.7, color: "var(--color-text-secondary)", marginBottom: 16 }}>{activeTopic.content}</p>
+
+                  {activeTopic.formulas?.length > 0 && (
+                    <>
+                      <h3 style={{ fontSize: 15, fontWeight: 500, marginBottom: 10 }}>Key formulas</h3>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 10, marginBottom: 16 }}>
+                        {activeTopic.formulas.map((f, i) => (
+                          <div key={i} style={{ background: "var(--color-background-secondary)", borderRadius: "var(--border-radius-md)", padding: "12px", border: "0.5px solid var(--color-border-tertiary)" }}>
+                            <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginBottom: 4 }}>{f.name}</div>
+                            <div style={{ fontSize: 18, fontWeight: 500, fontFamily: "var(--font-mono)", marginBottom: 6, color: "#8b5cf6" }}>{f.eq}</div>
+                            <div style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>{f.vars}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    <button onClick={() => { setFcDeck(shuffle(activeTopic.flashcards || [])); setFcIndex(0); setFcFlipped(false); setPage("flashcards"); }}
+                      style={{ padding: "8px 16px", borderRadius: "var(--border-radius-md)", border: "0.5px solid var(--color-border-tertiary)", background: "transparent", cursor: "pointer", fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
+                      🃏 Study flashcards
+                    </button>
+                    <button onClick={() => { startQuiz(UNITS[activeUnit]?.label); }}
+                      style={{ padding: "8px 16px", borderRadius: "var(--border-radius-md)", border: "0.5px solid var(--color-border-tertiary)", background: "transparent", cursor: "pointer", fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
+                      ❓ Practice quiz
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              !activeTopic && (
+                <div style={{ background: "var(--color-background-primary)", borderRadius: "var(--border-radius-lg)", border: "0.5px solid var(--color-border-tertiary)", padding: "2rem", textAlign: "center", color: "var(--color-text-secondary)" }}>
+                  <div style={{ fontSize: 32, marginBottom: 12 }}>📖</div>
+                  <p>Select a topic from the left to start learning</p>
+                </div>
+              )
+            )}
+          </div>
+        )}
+
+        {/* SIMULATIONS */}
+        {page === "simulations" && (
+          <div>
+            <h1 style={{ fontSize: 22, fontWeight: 500, marginBottom: 4 }}>Interactive simulations</h1>
+            <p style={{ color: "var(--color-text-secondary)", fontSize: 14, marginBottom: 20 }}>Manipulate variables to see physics in action</p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginBottom: 24 }}>
+              {SIMULATIONS.map(s => (
+                <button key={s.id} onClick={() => setSimActive(simActive === s.id ? null : s.id)}
+                  style={{ background: simActive === s.id ? "var(--color-background-info)" : "var(--color-background-primary)", borderRadius: "var(--border-radius-lg)", border: simActive === s.id ? "2px solid var(--color-border-info)" : "0.5px solid var(--color-border-tertiary)", padding: "1.25rem", cursor: "pointer", textAlign: "left" }}>
+                  <div style={{ fontSize: 28, marginBottom: 8 }}>{s.icon}</div>
+                  <div style={{ fontWeight: 500, fontSize: 14, marginBottom: 4, color: simActive === s.id ? "var(--color-text-info)" : "var(--color-text-primary)" }}>{s.title}</div>
+                  <div style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>{s.desc}</div>
+                </button>
+              ))}
+            </div>
+            {simActive && (() => {
+              const sim = SIMULATIONS.find(s => s.id === simActive);
+              if (!sim) return null;
+              const SimComp = sim.component;
+              return (
+                <div style={{ background: "var(--color-background-primary)", borderRadius: "var(--border-radius-lg)", border: "0.5px solid var(--color-border-tertiary)", padding: "1.5rem" }}>
+                  <h2 style={{ fontSize: 18, fontWeight: 500, marginBottom: 4 }}>{sim.title}</h2>
+                  <p style={{ fontSize: 13, color: "var(--color-text-secondary)", marginBottom: 12 }}>{sim.desc}</p>
+                  <SimComp />
+                </div>
+              );
+            })()}
+          </div>
+        )}
+
+        {/* FLASHCARDS */}
+        {page === "flashcards" && (
+          <div>
+            <h1 style={{ fontSize: 22, fontWeight: 500, marginBottom: 4 }}>Flashcards</h1>
+            <p style={{ color: "var(--color-text-secondary)", fontSize: 14, marginBottom: 16 }}>{fcDeck.length} cards · Click card to flip</p>
+
+            <div style={{ display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" }}>
+              <select value={fcFilter} onChange={e => { setFcFilter(e.target.value); setFcIndex(0); setFcFlipped(false); setFcDeck(shuffle(e.target.value === "all" ? ALL_FLASHCARDS : ALL_FLASHCARDS.filter(f => f.unit === e.target.value))); }}
+                style={{ padding: "6px 12px", borderRadius: "var(--border-radius-md)", border: "0.5px solid var(--color-border-secondary)", background: "var(--color-background-primary)", fontSize: 13, cursor: "pointer" }}>
+                <option value="all">All units</option>
+                {Object.values(UNITS).map(u => <option key={u.id} value={u.label}>{u.label}</option>)}
+              </select>
+              <button onClick={() => { setFcDeck(shuffle(fcDeck)); setFcIndex(0); setFcFlipped(false); }}
+                style={{ padding: "6px 12px", borderRadius: "var(--border-radius-md)", border: "0.5px solid var(--color-border-tertiary)", background: "transparent", cursor: "pointer", fontSize: 13 }}>
+                🔀 Shuffle
+              </button>
+            </div>
+
+            {fcDeck.length > 0 ? (
+              <>
+                <div style={{ fontSize: 13, color: "var(--color-text-secondary)", marginBottom: 8, textAlign: "center" }}>
+                  {fcIndex + 1} / {fcDeck.length} · {fcDeck[fcIndex]?.unit} → {fcDeck[fcIndex]?.topic}
+                </div>
+                <div onClick={() => { setFcFlipped(f => !f); if (!fcFlipped) addXp(1); }}
+                  style={{ background: "var(--color-background-primary)", borderRadius: "var(--border-radius-lg)", border: "0.5px solid var(--color-border-tertiary)", padding: "2rem", minHeight: 180, cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", marginBottom: 16, transition: "box-shadow 0.2s" }}>
+                  <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginBottom: 12, background: "var(--color-background-secondary)", borderRadius: 20, padding: "3px 12px" }}>
+                    {fcFlipped ? "ANSWER" : "QUESTION — click to reveal"}
+                  </div>
+                  <div style={{ fontSize: 18, fontWeight: 500, lineHeight: 1.5 }}>
+                    {fcFlipped ? fcDeck[fcIndex]?.a : fcDeck[fcIndex]?.q}
+                  </div>
+                </div>
+                <div style={{ display: "flex", gap: 8, justifyContent: "center" }}>
+                  <button onClick={() => { if (fcIndex > 0) { setFcIndex(i => i - 1); setFcFlipped(false); } }}
+                    style={{ padding: "8px 20px", borderRadius: "var(--border-radius-md)", border: "0.5px solid var(--color-border-tertiary)", background: "transparent", cursor: "pointer", fontSize: 14 }}>
+                    ← Prev
+                  </button>
+                  <button onClick={() => { if (fcIndex < fcDeck.length - 1) { setFcIndex(i => i + 1); setFcFlipped(false); } else { setFcIndex(0); setFcFlipped(false); } }}
+                    style={{ padding: "8px 20px", borderRadius: "var(--border-radius-md)", border: "0.5px solid var(--color-border-tertiary)", background: "transparent", cursor: "pointer", fontSize: 14 }}>
+                    Next →
+                  </button>
+                </div>
+              </>
+            ) : (
+              <p style={{ color: "var(--color-text-secondary)", textAlign: "center", padding: "2rem" }}>No flashcards for this filter.</p>
+            )}
+          </div>
+        )}
+
+        {/* QUIZ */}
+        {page === "quiz" && (
+          <div>
+            {!quizActive ? (
+              <div>
+                <h1 style={{ fontSize: 22, fontWeight: 500, marginBottom: 4 }}>Quiz</h1>
+                <p style={{ color: "var(--color-text-secondary)", fontSize: 14, marginBottom: 20 }}>10 random questions per session · +10 XP per correct answer</p>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
+                  <button onClick={() => startQuiz("all")}
+                    style={{ background: "var(--color-background-primary)", borderRadius: "var(--border-radius-lg)", border: "0.5px solid var(--color-border-tertiary)", padding: "1.5rem", cursor: "pointer", textAlign: "left" }}>
+                    <div style={{ fontSize: 24, marginBottom: 8 }}>🎲</div>
+                    <div style={{ fontWeight: 500, marginBottom: 4 }}>All units</div>
+                    <div style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>{ALL_QUIZ.length} questions total</div>
+                  </button>
+                  {Object.values(UNITS).map(unit => (
+                    <button key={unit.id} onClick={() => startQuiz(unit.label)}
+                      style={{ background: "var(--color-background-primary)", borderRadius: "var(--border-radius-lg)", border: "0.5px solid var(--color-border-tertiary)", padding: "1.5rem", cursor: "pointer", textAlign: "left" }}>
+                      <div style={{ fontSize: 24, marginBottom: 8 }}>{unit.icon}</div>
+                      <div style={{ fontWeight: 500, marginBottom: 4 }}>{unit.label}</div>
+                      <div style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>{ALL_QUIZ.filter(q => q.unit === unit.label).length} questions</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : quizDone ? (
+              <div style={{ textAlign: "center", padding: "2rem" }}>
+                <div style={{ fontSize: 48, marginBottom: 12 }}>{quizScore >= 8 ? "🏆" : quizScore >= 5 ? "👍" : "📚"}</div>
+                <h1 style={{ fontSize: 22, fontWeight: 500, marginBottom: 8 }}>{quizScore}/{quizDeck.length} correct</h1>
+                <p style={{ color: "var(--color-text-secondary)", marginBottom: 20 }}>+{quizScore * 10 + 20} XP earned</p>
+                <div style={{ display: "flex", gap: 8, justifyContent: "center" }}>
+                  <button onClick={() => startQuiz("all")} style={{ padding: "10px 20px", borderRadius: "var(--border-radius-md)", border: "0.5px solid var(--color-border-tertiary)", background: "transparent", cursor: "pointer", fontSize: 14 }}>Try again</button>
+                  <button onClick={() => { setQuizActive(false); }} style={{ padding: "10px 20px", borderRadius: "var(--border-radius-md)", border: "0.5px solid var(--color-border-tertiary)", background: "transparent", cursor: "pointer", fontSize: 14 }}>Choose topic</button>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, fontSize: 13, color: "var(--color-text-secondary)" }}>
+                  <span>Question {quizIndex + 1} of {quizDeck.length}</span>
+                  <span>{quizScore} correct so far</span>
+                </div>
+                <div style={{ height: 4, background: "var(--color-background-secondary)", borderRadius: 2, marginBottom: 20, overflow: "hidden" }}>
+                  <div style={{ height: "100%", width: `${((quizIndex) / quizDeck.length) * 100}%`, background: "#f59e0b", transition: "width 0.3s" }} />
+                </div>
+
+                <div style={{ background: "var(--color-background-primary)", borderRadius: "var(--border-radius-lg)", border: "0.5px solid var(--color-border-tertiary)", padding: "1.5rem", marginBottom: 16 }}>
+                  <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginBottom: 8 }}>{quizDeck[quizIndex].unit} · {quizDeck[quizIndex].topic}</div>
+                  <p style={{ fontSize: 16, fontWeight: 500, lineHeight: 1.6, marginBottom: 0 }}>{quizDeck[quizIndex].q}</p>
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
+                  {quizDeck[quizIndex].choices.map((c, i) => {
+                    let bg = "var(--color-background-primary)";
+                    let border = "0.5px solid var(--color-border-tertiary)";
+                    if (quizSelected !== null) {
+                      if (i === quizDeck[quizIndex].ans) { bg = "var(--color-background-success)"; border = "0.5px solid var(--color-border-success)"; }
+                      else if (i === quizSelected && quizSelected !== quizDeck[quizIndex].ans) { bg = "var(--color-background-danger)"; border = "0.5px solid var(--color-border-danger)"; }
+                    }
+                    return (
+                      <button key={i} onClick={() => handleQuizAnswer(i)}
+                        style={{ background: bg, border, borderRadius: "var(--border-radius-md)", padding: "12px 16px", cursor: quizSelected !== null ? "default" : "pointer", textAlign: "left", fontSize: 14, lineHeight: 1.5 }}>
+                        <span style={{ fontWeight: 500, marginRight: 8 }}>{["A","B","C","D"][i]}.</span>{c}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {quizSelected !== null && (
+                  <div style={{ background: quizSelected === quizDeck[quizIndex].ans ? "var(--color-background-success)" : "var(--color-background-danger)", borderRadius: "var(--border-radius-md)", padding: "12px 16px", marginBottom: 16, fontSize: 14 }}>
+                    <div style={{ fontWeight: 500, marginBottom: 4 }}>{quizSelected === quizDeck[quizIndex].ans ? "✅ Correct!" : "❌ Incorrect"}</div>
+                    <div style={{ color: "var(--color-text-secondary)" }}>{quizDeck[quizIndex].explain}</div>
+                  </div>
+                )}
+
+                {quizSelected !== null && (
+                  <button onClick={nextQuestion} style={{ width: "100%", padding: "12px", borderRadius: "var(--border-radius-md)", border: "0.5px solid var(--color-border-secondary)", background: "transparent", cursor: "pointer", fontSize: 14, fontWeight: 500 }}>
+                    {quizIndex + 1 >= quizDeck.length ? "See results →" : "Next question →"}
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* EXAM MODE */}
+        {page === "exam" && (
+          <div>
+            {!examMode ? (
+              <div style={{ textAlign: "center", padding: "2rem" }}>
+                <div style={{ fontSize: 48, marginBottom: 16 }}>📝</div>
+                <h1 style={{ fontSize: 22, fontWeight: 500, marginBottom: 8 }}>Regents Exam Simulator</h1>
+                <p style={{ color: "var(--color-text-secondary)", marginBottom: 24 }}>20 questions · 30 minute timer · Full exam experience</p>
+                <button onClick={() => { setExamMode(true); setExamTime(1800); setExamAnswers({}); setExamSubmitted(false); }}
+                  style={{ padding: "12px 32px", borderRadius: "var(--border-radius-md)", border: "0.5px solid var(--color-border-secondary)", background: "transparent", cursor: "pointer", fontSize: 15, fontWeight: 500 }}>
+                  Start exam
+                </button>
+              </div>
+            ) : (
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+                  <h1 style={{ fontSize: 20, fontWeight: 500 }}>Regents Practice Exam</h1>
+                  {!examSubmitted && (
+                    <div style={{ fontSize: 16, fontWeight: 500, fontFamily: "var(--font-mono)", background: examTime < 300 ? "var(--color-background-danger)" : "var(--color-background-secondary)", padding: "6px 16px", borderRadius: "var(--border-radius-md)", color: examTime < 300 ? "var(--color-text-danger)" : "var(--color-text-primary)" }}>
+                      ⏱ {formatTime(examTime)}
+                    </div>
+                  )}
+                </div>
+
+                {examSubmitted ? (
+                  <div>
+                    <div style={{ background: "var(--color-background-primary)", borderRadius: "var(--border-radius-lg)", border: "0.5px solid var(--color-border-tertiary)", padding: "1.5rem", marginBottom: 20, textAlign: "center" }}>
+                      <div style={{ fontSize: 36, marginBottom: 8 }}>
+                        {examDeck.filter((q, i) => examAnswers[i] === q.ans).length >= 17 ? "🏆" : "📚"}
+                      </div>
+                      <div style={{ fontSize: 24, fontWeight: 500, marginBottom: 4 }}>
+                        {examDeck.filter((q, i) => examAnswers[i] === q.ans).length} / {examDeck.length}
+                      </div>
+                      <div style={{ fontSize: 14, color: "var(--color-text-secondary)" }}>
+                        {Math.round((examDeck.filter((q, i) => examAnswers[i] === q.ans).length / examDeck.length) * 100)}% — {examDeck.filter((q, i) => examAnswers[i] === q.ans).length >= 17 ? "Excellent!" : examDeck.filter((q, i) => examAnswers[i] === q.ans).length >= 13 ? "Good, keep reviewing" : "More review needed"}
+                      </div>
+                    </div>
+                    {examDeck.map((q, i) => (
+                      <div key={i} style={{ background: "var(--color-background-primary)", borderRadius: "var(--border-radius-md)", border: `0.5px solid ${examAnswers[i] === q.ans ? "var(--color-border-success)" : "var(--color-border-danger)"}`, padding: "1rem", marginBottom: 8 }}>
+                        <div style={{ fontSize: 12, color: "var(--color-text-secondary)", marginBottom: 4 }}>{i + 1}. {q.unit}</div>
+                        <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 8 }}>{q.q}</div>
+                        <div style={{ fontSize: 13, color: examAnswers[i] === q.ans ? "var(--color-text-success)" : "var(--color-text-danger)", marginBottom: 4 }}>
+                          Your answer: {q.choices[examAnswers[i]] ?? "Not answered"}
+                          {examAnswers[i] !== q.ans && <span style={{ color: "var(--color-text-success)", marginLeft: 8 }}>✓ Correct: {q.choices[q.ans]}</span>}
+                        </div>
+                        <div style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>{q.explain}</div>
+                      </div>
+                    ))}
+                    <button onClick={() => { setExamMode(false); setExamAnswers({}); setExamSubmitted(false); setExamTime(1800); }}
+                      style={{ padding: "10px 20px", borderRadius: "var(--border-radius-md)", border: "0.5px solid var(--color-border-tertiary)", background: "transparent", cursor: "pointer", fontSize: 14, marginTop: 12 }}>
+                      Retake exam
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <div style={{ fontSize: 13, color: "var(--color-text-secondary)", marginBottom: 16 }}>
+                      {Object.keys(examAnswers).length}/{examDeck.length} answered
+                    </div>
+                    {examDeck.map((q, i) => (
+                      <div key={i} style={{ background: "var(--color-background-primary)", borderRadius: "var(--border-radius-md)", border: "0.5px solid var(--color-border-tertiary)", padding: "1.25rem", marginBottom: 12 }}>
+                        <div style={{ fontSize: 12, color: "var(--color-text-secondary)", marginBottom: 4 }}>{i + 1}. {q.unit}</div>
+                        <p style={{ fontSize: 15, fontWeight: 500, marginBottom: 12 }}>{q.q}</p>
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+                          {q.choices.map((c, j) => (
+                            <button key={j} onClick={() => setExamAnswers(a => ({ ...a, [i]: j }))}
+                              style={{ padding: "8px 12px", borderRadius: "var(--border-radius-md)", border: examAnswers[i] === j ? "2px solid var(--color-border-info)" : "0.5px solid var(--color-border-tertiary)", background: examAnswers[i] === j ? "var(--color-background-info)" : "transparent", cursor: "pointer", textAlign: "left", fontSize: 13, color: examAnswers[i] === j ? "var(--color-text-info)" : "var(--color-text-primary)" }}>
+                              <span style={{ fontWeight: 500, marginRight: 6 }}>{["A","B","C","D"][j]}.</span>{c}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                    <button onClick={submitExam}
+                      style={{ width: "100%", padding: "14px", borderRadius: "var(--border-radius-md)", border: "0.5px solid var(--color-border-secondary)", background: "transparent", cursor: "pointer", fontSize: 15, fontWeight: 500, marginTop: 8 }}>
+                      Submit exam ({Object.keys(examAnswers).length}/{examDeck.length} answered)
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* FORMULAS */}
+        {page === "formulas" && (
+          <div>
+            <h1 style={{ fontSize: 22, fontWeight: 500, marginBottom: 4 }}>Formula reference</h1>
+            <p style={{ color: "var(--color-text-secondary)", fontSize: 14, marginBottom: 20 }}>All {allFormulas.length} formulas from every unit</p>
+            {Object.values(UNITS).map(unit => {
+              const unitFormulas = allFormulas.filter(f => f.unit === unit.label);
+              if (!unitFormulas.length) return null;
+              return (
+                <div key={unit.id} style={{ marginBottom: 24 }}>
+                  <h2 style={{ fontSize: 16, fontWeight: 500, marginBottom: 12, display: "flex", alignItems: "center", gap: 8 }}>
+                    <span>{unit.icon}</span>{unit.label}
+                  </h2>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 10 }}>
+                    {unitFormulas.map((f, i) => (
+                      <div key={i} style={{ background: "var(--color-background-primary)", borderRadius: "var(--border-radius-md)", border: "0.5px solid var(--color-border-tertiary)", padding: "1rem" }}>
+                        <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginBottom: 4 }}>{f.topic}</div>
+                        <div style={{ fontSize: 12, fontWeight: 500, marginBottom: 6 }}>{f.name}</div>
+                        <div style={{ fontSize: 20, fontFamily: "var(--font-mono)", fontWeight: 500, color: unit.color, marginBottom: 8, padding: "8px", background: "var(--color-background-secondary)", borderRadius: "var(--border-radius-md)", textAlign: "center" }}>{f.eq}</div>
+                        <div style={{ fontSize: 12, color: "var(--color-text-secondary)", lineHeight: 1.5 }}>{f.vars}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* AI TUTOR */}
+        {page === "ai-tutor" && <AITutor />}
+
+      </div>
+    </div>
+  );
+}
