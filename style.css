@@ -1,3 +1,4 @@
+
 /* Nova Theme – Blue Gradient & Glitter */
 :root {
   --nova-blue: #0f2b3d;
@@ -125,6 +126,25 @@ body::before {
   font-weight: 500;
   backdrop-filter: blur(4px);
   color: #90e0ef;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.reset-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.65rem;
+  transition: all 0.2s;
+}
+
+.reset-btn:hover {
+  background: #dc2626;
+  transform: scale(1.02);
 }
 
 /* Cards */
@@ -287,6 +307,67 @@ body::before {
 }
 
 .sidebar-topic-btn.done {
+  color: #90e0ef;
+}
+
+/* Mastery badge */
+.mastery-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 0.15rem 0.5rem;
+  border-radius: 1rem;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+
+.unit-card.completed {
+  border: 2px solid #f59e0b;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+}
+
+/* Next topic button */
+.next-topic-btn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+  margin-left: 0.5rem;
+}
+
+.next-topic-btn:hover {
+  background: #2563eb;
+  transform: scale(1.02);
+}
+
+/* Reference tables */
+.reference-table {
+  font-size: 0.8rem;
+  overflow-x: auto;
+}
+
+.reference-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(0,0,0,0.3);
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.reference-table th, .reference-table td {
+  border: 1px solid #2c4c6e;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.reference-table th {
+  background: #0f2b3d;
   color: #90e0ef;
 }
 
