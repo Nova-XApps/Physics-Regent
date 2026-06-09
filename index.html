@@ -1,498 +1,932 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Physics Regents Prep – Complete Study App</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-      background: #f1f5f9;
-      color: #0f172a;
-    }
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 1rem;
-    }
-    .header {
-      background: white;
-      border-bottom: 1px solid #e2e8f0;
-      padding: 0.75rem 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .logo {
-      font-size: 1.2rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .nav {
-      display: flex;
-      gap: 0.25rem;
-      flex-wrap: wrap;
-    }
-    .nav-btn {
-      padding: 0.4rem 0.8rem;
-      border-radius: 0.5rem;
-      border: 1px solid #e2e8f0;
-      background: transparent;
-      cursor: pointer;
-      font-size: 0.8rem;
-      transition: all 0.1s;
-    }
-    .nav-btn.active {
-      background: #eff6ff;
-      border-color: #3b82f6;
-      color: #1e40af;
-    }
-    .xp-badge {
-      background: #f8fafc;
-      padding: 0.25rem 0.75rem;
-      border-radius: 2rem;
-      font-size: 0.75rem;
-      font-weight: 500;
-    }
-    .card {
-      background: white;
-      border-radius: 1rem;
-      border: 1px solid #e2e8f0;
-      padding: 1.25rem;
-      margin-bottom: 1rem;
-    }
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-    }
-    button {
-      cursor: pointer;
-    }
-    .prose {
-      font-size: 0.9rem;
-      line-height: 1.5;
-    }
-    .prose table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 0.75rem 0;
-      font-size: 0.8rem;
-    }
-    .prose th, .prose td {
-      border: 1px solid #e2e8f0;
-      padding: 0.5rem;
-      text-align: left;
-      vertical-align: top;
-    }
-    .prose th {
-      background: #f8fafc;
-    }
-    .flashcard {
-      background: white;
-      border-radius: 1rem;
-      border: 1px solid #e2e8f0;
-      padding: 2rem;
-      text-align: center;
-      cursor: pointer;
-      min-height: 180px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      font-weight: 500;
-      transition: all 0.1s;
-    }
-    .quiz-option {
-      padding: 0.75rem;
-      border: 1px solid #e2e8f0;
-      border-radius: 0.5rem;
-      background: white;
-      text-align: left;
-      cursor: pointer;
-      transition: all 0.1s;
-    }
-    .quiz-option.correct {
-      background: #dcfce7;
-      border-color: #22c55e;
-    }
-    .quiz-option.wrong {
-      background: #fee2e2;
-      border-color: #ef4444;
-    }
-    .progress-bar {
-      height: 8px;
-      background: #e2e8f0;
-      border-radius: 4px;
-      overflow: hidden;
-      margin: 0.5rem 0;
-    }
-    .progress-fill {
-      height: 100%;
-      background: #f59e0b;
-      width: 0%;
-      transition: width 0.2s;
-    }
-    @media (max-width: 640px) {
-      .container { padding: 0.75rem; }
-      .header { flex-direction: column; align-items: stretch; }
-      .nav { justify-content: center; }
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Physics Regents Prep</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<div id="root"></div>
+  <div id="root"></div>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel" data-presets="react">
+/* app.js — loaded as type="text/babel" by index.html */
+const { useState, useEffect, useRef } = React;
 
-<script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+// ─────────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────────
+const UNITS = {
+  foundations: {
+    id: "foundations", label: "Foundations", icon: "📐", color: "#3b82f6",
+    topics: [
+      {
+        id: "scalars-vectors", title: "Scalars vs. Vectors & Kinematics",
+        content: `Scalars: magnitude only (time, mass, temp, energy, work, power).
+Vectors: magnitude + direction (force, velocity, acceleration, momentum, fields).
+Distance (scalar) vs. Displacement (vector). Speed (scalar) vs. Velocity (vector).
+Average velocity: v̄ = (v_f + v_i) / 2. Acceleration: a = Δv / t.
 
-<script type="text/babel">
-  const { useState, useEffect, useRef } = React;
+Kinematics (constant acceleration):
+  v_f = v_i + a t
+  d = v_i t + ½ a t²
+  v_f² = v_i² + 2 a d
 
-  // ------------------------------------------------------------------
-  // COMPLETE DATA FROM ALL 4 PDFs (condensed but every concept present)
-  // ------------------------------------------------------------------
-  const UNITS = {
-    energy: {
-      id: "energy", label: "Energy", icon: "⚡", color: "#f59e0b",
-      topics: [
-        { id: "energy-types", title: "Energy Types & Equations", content: "Energy is measured in joules (J). KE=½mv², PEg=mgΔh, PEs=½kx², ME=KE+PE, Conservation: E_initial=E_final. Example: 2kg cart from 50J PEg to 5J PEg → KE=45J.", formulas: ["KE=½mv²","PEg=mgΔh","PEs=½kx²","E_initial=E_final"], flashcards: ["What is KE? Energy of motion: KE=½mv²","What is PEg? Energy due to height: mgΔh","What is mechanical energy? KE+PEg+PEs"], quiz: [{q:"3kg at 4m/s KE?", opts:["6J","24J","48J","12J"], ans:1, exp:"½*3*16=24J"}] },
-        { id: "work-power", title: "Work & Power", content: "Work W=Fd (parallel force). Power P=W/t=Fv. Example: 15N over 4m → 60J work.", formulas: ["W=Fd","P=W/t","P=Fv"], flashcards: ["What is work? Energy transfer by force through distance","What is power? Rate of doing work"], quiz: [{q:"15N moves 4m, work?", opts:["3.75J","19J","60J","11J"], ans:2, exp:"15*4=60J"}] },
-        { id: "thermal", title: "Thermal Energy", content: "Q=mcΔT. Heat flows hot→cold (2nd Law). Example: 0.5kg water ΔT=10°C, c=4186 → Q=20,930J.", formulas: ["Q=mcΔT","Q_gained+Q_lost=0"], flashcards: ["Q=mcΔT meaning? mass × specific heat × temp change","Direction of heat? Hot to cold"], quiz: [{q:"0.5kg water 20→30°C, Q?", opts:["4186J","20930J","2093J","41860J"], ans:1, exp:"0.5*4186*10=20930J"}] },
-        { id: "ohms-law", title: "Ohm's Law & Circuits", content: "V=IR. Series: R_eq=R₁+R₂, same I. Parallel: 1/R_eq=1/R₁+1/R₂, same V. Electrical energy: W=VIt=I²Rt.", formulas: ["V=IR","P=VI","R_series=R₁+R₂","1/R_parallel=1/R₁+1/R₂"], flashcards: ["Ohm's Law? V=IR","Series current? Same everywhere","Parallel voltage? Same everywhere"], quiz: [{q:"12V,6Ω, current?", opts:["72A","2A","0.5A","18A"], ans:1, exp:"12/6=2A"}] },
-        { id: "efficiency", title: "Efficiency", content: "% Efficiency = (useful output/input)×100%. Example: 800J input, 200J output → 25%. Devices convert energy (wind turbine, solar cell).", formulas: ["% = (output/input)×100%"], flashcards: ["Efficiency formula? (output/input)×100%","Is efficiency ever >100%? No"], quiz: [{q:"800J input,200J output, efficiency?", opts:["200%","25%","400%","75%"], ans:1, exp:"200/800=0.25=25%"}] },
-        { id: "field-energy", title: "Field Energy", content: "Fields (gravitational, electric, magnetic) store potential energy. Moving with field force → field energy → KE. Moving against → KE → field energy.", formulas: ["ΔE_field = -W_field"], flashcards: ["What is a field? Region where force acts without contact","What happens when objects move with field force? Field energy decreases, KE increases"], quiz: [{q:"Two positive charges released, they?", opts:["Toward","Away","Stay","Orbit"], ans:1, exp:"Like charges repel, field energy decreases, KE increases"}] }
-      ]
-    },
-    forces: {
-      id: "forces", label: "Forces & Interactions", icon: "🎯", color: "#ef4444",
-      topics: [
-        { id: "newtons-laws", title: "Newton's Laws & Kinematics", content: "1st: inertia. 2nd: F_net=ma. 3rd: action-reaction. Kinematics: v_f=v_i+at, d=v_it+½at², v_f²=v_i²+2ad. Projectile: horizontal constant, vertical gravity. Example: 4kg cart 12N right, 4N left → F_net=8N, a=2m/s².", formulas: ["F_net=ma","Fg=mg","v_f=v_i+at","d=v_it+½at²"], flashcards: ["Newton's 2nd law? F=ma","Weight formula? Fg=mg","Projectile at highest point v_y? 0"], quiz: [{q:"4kg,12N right,4N left, a?", opts:["2 m/s² right","3 m/s² right","4 m/s² left","8 m/s² right"], ans:0, exp:"(12-4)/4=2 m/s² right"}] },
-        { id: "momentum", title: "Momentum & Collisions", content: "p=mv. Conservation: p_before=p_after. Elastic: KE also conserved. Inelastic: only momentum. Perfectly inelastic: stick together. Example: 2kg +6m/s and 1kg -3m/s stick → v_f=+3m/s.", formulas: ["p=mv","p_before=p_after","(m1+m2)v_f = m1v1i+m2v2i"], flashcards: ["Momentum definition? p=mv","Elastic collision conserves? momentum and KE","Perfectly inelastic? objects stick"], quiz: [{q:"2kg +6m/s, 1kg -3m/s stick, v_f?", opts:["+1 m/s","+3 m/s","-3 m/s","+9 m/s"], ans:1, exp:"(2*6+1*-3)/3=9/3=3 m/s"}] },
-        { id: "impulse", title: "Impulse & Safety", content: "J=FΔt=Δp=mΔv. Longer Δt → smaller F. Airbags, crumple zones use this. Example: 0.2kg egg 12→0 m/s, Δt=0.02s → F=120N; Δt=0.2s → F=12N.", formulas: ["J=FΔt=Δp"], flashcards: ["Impulse definition? Force × time = change in momentum","How do airbags help? Increase stopping time, reduce force"], quiz: [{q:"0.2kg egg 12→0 m/s in 0.02s, force?", opts:["120N","240N","12N","2.4N"], ans:0, exp:"Δp=0.2*12=2.4, F=2.4/0.02=120N"}] },
-        { id: "field-forces", title: "Gravitational & Electric Forces", content: "Gravitational: Fg=Gm₁m₂/r², inverse-square. Electric: Fe=kq₁q₂/r². Centripetal: Fc=mv²/r, inward. Example: distance doubles → force becomes F/4.", formulas: ["Fg=Gm₁m₂/r²","Fe=kq₁q₂/r²","Fc=mv²/r"], flashcards: ["Inverse-square law? Force ∝ 1/r²","Gravity attractive or repulsive? Always attractive","Centripetal force direction? Toward center"], quiz: [{q:"Distance doubles, gravitational force?", opts:["2×","½×","4×","¼×"], ans:3, exp:"Inverse square: 1/(2²)=1/4"}] },
-        { id: "electromagnetism", title: "Electromagnetism", content: "Current creates magnetic field (Oersted). Changing magnetic field creates current (Faraday). Applications: motors, generators, transformers.", formulas: [], flashcards: ["What does current produce? Magnetic field","What produces current by induction? Changing magnetic field","Name an application? Generator, motor"], quiz: [{q:"Compass deflects near current-carrying wire. This shows?", opts:["Magnetic field creates current","Current creates magnetic field","Voltage creates magnetic field","Mass creates magnetic field"], ans:1, exp:"Current produces magnetic field"}] }
-      ]
-    },
-    waves: {
-      id: "waves", label: "Waves & Radiation", icon: "🌊", color: "#8b5cf6",
-      topics: [
-        { id: "wave-basics", title: "Wave Basics", content: "v=fλ, T=1/f. Transverse (perpendicular) and longitudinal (parallel). Phase: in phase → constructive, out of phase → destructive. Entering new medium: frequency constant, speed and λ change.", formulas: ["v=fλ","T=1/f"], flashcards: ["Wave speed equation? v=fλ","Period relation? T=1/f","Transverse wave example? Light"], quiz: [{q:"v=340 m/s, f=170 Hz, λ?", opts:["2m","57800m","0.5m","510m"], ans:0, exp:"λ=v/f=340/170=2m"}] },
-        { id: "em-spectrum", title: "EM Spectrum", content: "Radio, Microwave, IR, Visible, UV, X-ray, Gamma (increasing f). E=hf, higher f = higher energy. Refraction: n=c/v, Snell's law: n₁sinθ₁=n₂sinθ₂. Diffraction, polarization.", formulas: ["E=hf","n=c/v","n₁sinθ₁=n₂sinθ₂"], flashcards: ["Order EM spectrum low→high f? Radio→Microwave→IR→Visible→UV→X-ray→Gamma","Photon energy equation? E=hf","Refraction is? Bending of light"], quiz: [{q:"Highest photon energy?", opts:["Radio","Visible","Infrared","Gamma"], ans:3, exp:"Gamma highest frequency → highest E=hf"}] },
-        { id: "wave-particle", title: "Wave-Particle Duality", content: "Light as wave (interference, diffraction) and as particle (photoelectric effect). Photoelectric effect: electrons emitted only if light frequency above threshold. E=hf.", formulas: ["E_photon=hf"], flashcards: ["Wave model supports? Interference, diffraction","Particle model supports? Photoelectric effect","Photoelectric effect observation? Low frequency no emission even if bright"], quiz: [{q:"Very bright low-frequency light hits metal. Electrons?", opts:["Yes, many","Yes, few","No","Depends"], ans:2, exp:"Low frequency = low photon energy, insufficient"}] },
-        { id: "optics", title: "Mirrors & Lenses", content: "1/F = 1/do + 1/di. M = hi/ho = -di/do. Sign: real image di positive, virtual negative. Converging: F positive (concave mirror, convex lens). Diverging: F negative.", formulas: ["1/F=1/do+1/di","M=-di/do"], flashcards: ["Mirror equation? 1/F=1/do+1/di","Magnification formula? M=hi/ho=-di/do","Focal length sign for converging? Positive"], quiz: [{q:"do=30cm, F=10cm, di?", opts:["7.5cm","15cm","60cm","20cm"], ans:1, exp:"1/10=1/30+1/di → 1/di=2/30 → di=15cm"}] },
-        { id: "digital-analog", title: "Digital vs Analog", content: "Analog: continuous (vinyl). Digital: discrete 0/1 (text message). Digital advantages: easy copy, storage, error correction. Disadvantages: hacking, deletion.", formulas: [], flashcards: ["Analog signal example? Vinyl record","Digital signal example? Text message","Digital advantage? Easy to copy and store"], quiz: [{q:"Vinyl record is:", opts:["Digital","Analog","Binary","Electromagnetic"], ans:1, exp:"Continuous waveform"}] }
-      ]
-    },
-    bigbang: {
-      id: "bigbang", label: "Big Bang & Nuclear", icon: "💥", color: "#06b6d4",
-      topics: [
-        { id: "big-bang", title: "Big Bang Evidence", content: "3 evidences: 1) Redshift (galaxies moving away), 2) H/He ratio (~75% H, 25% He), 3) CMB (cosmic microwave background). Elements: Big Bang → H, He; stars → up to iron; supernovae → heavier.", formulas: [], flashcards: ["What is redshift? Light stretched from moving away galaxies","CMB is? Leftover radiation from early hot universe","Where are heavy elements made? Supernova explosions"], quiz: [{q:"Galaxy light shifted to longer wavelengths means?", opts:["Blueshift approaching","Redshift receding","White light","Infrared cooling"], ans:1, exp:"Redshift = moving away"}] },
-        { id: "nuclear-decay", title: "Radioactive Decay", content: "Alpha: loses 2p+2n, atomic # -2, mass # -4. Beta: neutron→proton+electron, atomic # +1, mass same. Gamma: photon, no change. E=mc² (mass defect → energy).", formulas: ["E=mc²","Alpha: Z-2, A-4","Beta: Z+1, A same"], flashcards: ["Alpha decay changes? Atomic # -2, mass # -4","Beta decay changes? Atomic # +1, mass same","Gamma decay changes? Nothing, only energy"], quiz: [{q:"U-238 alpha decay product?", opts:["U-234+neutron","Th-234+He","Th-236+He","Pa-234+electron"], ans:1, exp:"Atomic # -2 (U→Th), mass # -4"}] },
-        { id: "fission-fusion", title: "Fission vs Fusion", content: "Fission: splits heavy nucleus (U-235), chain reaction, controllable, produces waste. Fusion: combines light nuclei (²H+³H), occurs in stars, not yet controllable, no waste, more energy.", formulas: ["E=mc²"], flashcards: ["Fission: splits or combines? Splits heavy nucleus","Fusion: occurs where? In stars","Which produces radioactive waste? Fission"], quiz: [{q:"²H+³H→⁴He+n+energy is?", opts:["Alpha decay","Fission","Fusion","Beta decay"], ans:2, exp:"Two small nuclei combine = fusion"}] }
-      ]
-    }
-  };
+Velocity-time graph: slope = acceleration, area under curve = displacement.`,
+        formulas: ["v̄ = (v_f+v_i)/2", "a = Δv/t", "v_f = v_i+at", "d = v_i·t + ½at²", "v_f² = v_i²+2ad"],
+        flashcards: [
+          { q: "Scalar vs. vector?", a: "Scalar = magnitude only; vector = magnitude + direction." },
+          { q: "Distance vs. displacement?", a: "Distance = total path length (scalar); displacement = net change in position (vector)." },
+          { q: "Slope of a v-t graph?", a: "Acceleration." },
+          { q: "Area under a v-t graph?", a: "Displacement." }
+        ],
+        quiz: [{ q: "Car from rest to 20 m/s in 5 s — acceleration?", opts: ["4 m/s²", "5 m/s²", "2 m/s²", "10 m/s²"], ans: 0, exp: "a = Δv/t = 20/5 = 4 m/s²" }]
+      },
+      {
+        id: "circular-projectile", title: "Circular & Projectile Motion",
+        content: `Circular motion:
+  Centripetal acceleration  a_c = v²/r  (directed toward center)
+  Centripetal force         F_c = mv²/r
+  Doubling v quadruples a_c.
 
-  // Build all flashcards & quizzes
-  let ALL_FLASHCARDS = [];
-  let ALL_QUIZ = [];
-  Object.values(UNITS).forEach(unit => {
-    unit.topics.forEach(topic => {
-      if (topic.flashcards) {
-        topic.flashcards.forEach(f => ALL_FLASHCARDS.push({ q: f, unit: unit.label, topic: topic.title }));
-      } else {
-        // default flashcards from content
-        let lines = topic.content.split('\n').filter(l => l.includes('?'));
-        lines.forEach(l => ALL_FLASHCARDS.push({ q: l, unit: unit.label, topic: topic.title }));
+Projectile motion:
+  Horizontal: v_x = constant, a_x = 0
+  Vertical:   a_y = −9.8 m/s²
+  At peak: v_y = 0, time to peak t = v_{y0}/g
+  Total time in air = 2·t_peak
+  Range = v_x × total time
+  Components: v_x = v cosθ,  v_y = v sinθ`,
+        formulas: ["a_c = v²/r", "F_c = mv²/r", "v_x = v cosθ", "v_y = v sinθ", "t_peak = v_{y0}/g", "Range = v_x × 2t_peak"],
+        flashcards: [
+          { q: "Centripetal acceleration direction?", a: "Toward the center of the circular path." },
+          { q: "If v doubles, a_c changes by?", a: "4× (a_c ∝ v²)." },
+          { q: "Horizontal acceleration in projectile motion?", a: "Zero — horizontal velocity is constant." },
+          { q: "At the highest point, v_y = ?", a: "0 m/s." }
+        ],
+        quiz: [{ q: "v = 20 m/s, r = 5 m — centripetal acceleration?", opts: ["80 m/s²", "4 m/s²", "100 m/s²", "20 m/s²"], ans: 0, exp: "a_c = v²/r = 400/5 = 80 m/s²" }]
       }
-      if (topic.quiz) {
-        topic.quiz.forEach(q => ALL_QUIZ.push({ ...q, unit: unit.label, topic: topic.title }));
-      }
-    });
-  });
-  // Add extra Forces questions (15 from PDF)
-  const extraQuiz = [
-    { q: "Which two trials show increasing net force increases acceleration (mass constant)? Trials: 2kg,4N,2m/s² and 2kg,8N,4m/s²", opts: ["1&2","2&3","3&4","1&3"], ans: 0, exp: "Same mass, force doubles → acceleration doubles.", unit: "Forces & Interactions", topic: "Newton's Laws" },
-    { q: "5.0 kg cart, net force 15 N, acceleration?", opts: ["3 m/s²","75 m/s²","0.33 m/s²","10 m/s²"], ans: 0, exp: "a=F/m=15/5=3 m/s²", unit: "Forces & Interactions", topic: "Newton's Laws" },
-    { q: "Two carts: 1.5kg +4.0 m/s and 1.0kg -2.0 m/s stick. Total momentum?", opts: ["6.0","4.0","8.0","2.0"], ans: 1, exp: "(1.5*4)+(1*-2)=6-2=4 kg·m/s", unit: "Forces & Interactions", topic: "Momentum" },
-    { q: "Final velocity of stuck carts above?", opts: ["+2.0","+1.6","+4.0","0"], ans: 1, exp: "4/2.5=1.6 m/s", unit: "Forces & Interactions", topic: "Momentum" },
-    { q: "Helmet liners: A(0.010s,800N), B(0.020s,430N), C(0.035s,260N). Best reduces force?", opts: ["A","B","C","All"], ans: 2, exp: "Longest time → smallest force", unit: "Forces & Interactions", topic: "Impulse" },
-    { q: "Distance between masses doubled. Gravitational force?", opts: ["2×","½×","4×","¼×"], ans: 3, exp: "Inverse square: 1/4", unit: "Forces & Interactions", topic: "Field Forces" },
-    { q: "Two negative charges, electrostatic force?", opts: ["Attractive","Repulsive","Zero","Depends"], ans: 1, exp: "Like charges repel", unit: "Forces & Interactions", topic: "Field Forces" },
-    { q: "Observation that current produces magnetic field?", opts: ["Compass deflects","Ammeter reads","Bulb lights","Wire heats"], ans: 0, exp: "Compass deflection shows magnetic field", unit: "Forces & Interactions", topic: "Electromagnetism" },
-    { q: "Observation that changing magnetic field produces current?", opts: ["Moving magnet in coil makes ammeter deflect","Compass near battery","Wire heats","Voltage constant"], ans: 0, exp: "Induced current detected by ammeter", unit: "Forces & Interactions", topic: "Electromagnetism" }
-  ];
-  extraQuiz.forEach(q => ALL_QUIZ.push(q));
+    ]
+  },
+  forces: {
+    id: "forces", label: "Forces & Newton's Laws", icon: "🎯", color: "#ef4444",
+    topics: [
+      {
+        id: "newtons-laws", title: "Newton's Laws, Weight, Normal & Inclines",
+        content: `Newton's 1st Law (Inertia): Objects remain at rest or at constant velocity unless acted on by a net force.
+Newton's 2nd Law: F_net = m·a
+Newton's 3rd Law: Action-reaction pairs are equal, opposite, and act on different objects.
 
-  function shuffle(arr) {
-    let a = [...arr];
-    for (let i = a.length - 1; i > 0; i--) {
-      let j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
+Weight:    F_g = mg
+Normal force: perpendicular to the surface.
+
+On an incline (angle θ):
+  Component parallel to slope:   F_∥ = mg sinθ
+  Component perpendicular (normal): F_⊥ = mg cosθ
+
+Equilibrium: F_net = 0 → a = 0 (object may still move at constant speed).`,
+        formulas: ["F_net = ma", "F_g = mg", "F_∥ = mg sinθ", "F_⊥ = mg cosθ"],
+        flashcards: [
+          { q: "State Newton's 2nd Law.", a: "F_net = ma — net force equals mass times acceleration." },
+          { q: "Weight formula?", a: "F_g = mg (g ≈ 9.8 m/s² near Earth's surface)." },
+          { q: "Equilibrium condition?", a: "Net force = 0, so acceleration = 0." },
+          { q: "Parallel force component on an incline?", a: "F_∥ = mg sinθ, directed down the slope." }
+        ],
+        quiz: [{ q: "10 kg box, F_net = 20 N — acceleration?", opts: ["2 m/s²", "0.5 m/s²", "200 m/s²", "10 m/s²"], ans: 0, exp: "a = F/m = 20/10 = 2 m/s²" }]
+      },
+      {
+        id: "momentum-impulse", title: "Momentum, Impulse & Collisions",
+        content: `Momentum:  p = mv
+Impulse:   J = F·Δt = Δp = m·Δv
+
+Conservation of momentum: p_before = p_after (closed system).
+
+Perfectly inelastic collision (objects stick):
+  (m₁ + m₂)·v_f = m₁·v₁ + m₂·v₂
+
+Elastic collision (bounce apart):
+  Momentum AND kinetic energy conserved.
+
+Explosion (start from rest):
+  m₁v₁ + m₂v₂ = 0`,
+        formulas: ["p = mv", "J = FΔt = Δp", "(m₁+m₂)v_f = m₁v₁+m₂v₂", "m₁v₁+m₂v₂ = m₁v₁′+m₂v₂′"],
+        flashcards: [
+          { q: "Momentum formula?", a: "p = mv (kg·m/s)." },
+          { q: "Impulse equals?", a: "J = FΔt = Δp = mΔv." },
+          { q: "Perfectly inelastic collision result?", a: "Objects stick together; only momentum is conserved." },
+          { q: "Elastic collision conserves?", a: "Both momentum and kinetic energy." }
+        ],
+        quiz: [{ q: "2 kg cart at 3 m/s — momentum?", opts: ["6 kg·m/s", "1.5 kg·m/s", "5 kg·m/s", "0 kg·m/s"], ans: 0, exp: "p = mv = 2 × 3 = 6 kg·m/s" }]
+      }
+    ]
+  },
+  energy: {
+    id: "energy", label: "Energy, Work & Power", icon: "⚡", color: "#f59e0b",
+    topics: [
+      {
+        id: "energy-types", title: "Energy Types, Work, Power & Efficiency",
+        content: `Kinetic energy:      KE = ½mv²
+Gravitational PE:    PE_g = mgh
+Elastic PE:          PE_s = ½kx²
+
+Conservation of energy (no friction): E_total before = E_total after
+
+Work: W = F·d  (force must be parallel to displacement)
+  Positive work → adds energy; negative work → removes energy.
+
+Power:      P = W/t = F·v  (watts)
+Efficiency: % eff = (useful output / total input) × 100%
+
+Worked Example: Generator — 800 J input, 200 J output → efficiency = 25%.`,
+        formulas: ["KE = ½mv²", "PE_g = mgh", "PE_s = ½kx²", "W = Fd", "P = W/t = Fv", "% eff = (output/input)×100%"],
+        flashcards: [
+          { q: "Kinetic energy formula?", a: "KE = ½mv²." },
+          { q: "Gravitational PE formula?", a: "PE_g = mgh." },
+          { q: "Work formula?", a: "W = Fd (force parallel to displacement)." },
+          { q: "Power formula?", a: "P = W/t or P = Fv." },
+          { q: "Efficiency formula?", a: "% eff = (useful output / total input) × 100%." }
+        ],
+        quiz: [{ q: "2 kg object moving at 3 m/s — KE?", opts: ["9 J", "6 J", "3 J", "12 J"], ans: 0, exp: "KE = ½ × 2 × 3² = ½ × 2 × 9 = 9 J" }]
+      },
+      {
+        id: "thermal-circuits", title: "Thermal Energy & Electric Circuits",
+        content: `Thermal energy:
+  Q = mcΔT    (heat = mass × specific heat × change in temp)
+  Heat flows spontaneously from hot → cold (2nd Law of Thermodynamics).
+  Closed system: Q_gained + Q_lost = 0
+
+Ohm's Law:  V = IR
+Series circuit:    R_eq = R₁ + R₂ + …  (same current through all)
+Parallel circuit:  1/R_eq = 1/R₁ + 1/R₂ + …  (same voltage across all)
+
+Electrical energy: W = VIt = I²Rt = (V²/R)t
+Electrical power:  P = VI = I²R = V²/R
+
+Worked Example: 12 V source, 6 Ω resistor, 10 s
+  I = V/R = 2 A,  P = VI = 24 W,  W = Pt = 240 J`,
+        formulas: ["Q = mcΔT", "Q_gained + Q_lost = 0", "V = IR", "R_series = ΣRᵢ", "1/R_parallel = Σ(1/Rᵢ)", "P = VI = I²R = V²/R", "W = VIt"],
+        flashcards: [
+          { q: "Thermal energy equation?", a: "Q = mcΔT  (heat = mass × specific heat × ΔT)." },
+          { q: "Ohm's Law?", a: "V = IR." },
+          { q: "Total resistance in series?", a: "Sum of all individual resistances: R_eq = R₁ + R₂ + …" },
+          { q: "Total resistance in parallel?", a: "Reciprocal sum: 1/R_eq = 1/R₁ + 1/R₂ + …" }
+        ],
+        quiz: [{ q: "12 V source, 6 Ω resistor — current?", opts: ["2 A", "0.5 A", "72 A", "18 A"], ans: 0, exp: "I = V/R = 12/6 = 2 A" }]
+      }
+    ]
+  },
+  waves: {
+    id: "waves", label: "Waves & Optics", icon: "🌊", color: "#8b5cf6",
+    topics: [
+      {
+        id: "wave-basics", title: "Wave Properties & EM Spectrum",
+        content: `Wave speed equation: v = fλ     Period: T = 1/f
+
+Transverse waves: particle motion perpendicular to wave travel (light, water).
+Longitudinal waves: particle motion parallel to wave travel (sound).
+
+Electromagnetic spectrum (increasing frequency):
+  Radio → Microwave → Infrared → Visible → UV → X-ray → Gamma
+
+Photon energy: E = hf   (h = 6.63 × 10⁻³⁴ J·s)
+
+Refraction (light bending at boundary):
+  Index of refraction: n = c/v
+  Snell's Law: n₁ sinθ₁ = n₂ sinθ₂
+
+Other phenomena: Diffraction (spreading around obstacles), Polarization (transverse only).`,
+        formulas: ["v = fλ", "T = 1/f", "E = hf", "n = c/v", "n₁sinθ₁ = n₂sinθ₂"],
+        flashcards: [
+          { q: "Wave speed equation?", a: "v = fλ." },
+          { q: "Period and frequency relation?", a: "T = 1/f." },
+          { q: "EM spectrum order (low → high frequency)?", a: "Radio → Microwave → IR → Visible → UV → X-ray → Gamma." },
+          { q: "Photon energy formula?", a: "E = hf." },
+          { q: "Refraction is?", a: "Bending of a wave as it passes from one medium to another." }
+        ],
+        quiz: [{ q: "v = 340 m/s, f = 170 Hz — wavelength?", opts: ["2 m", "0.5 m", "57 800 m", "510 m"], ans: 0, exp: "λ = v/f = 340/170 = 2 m" }]
+      },
+      {
+        id: "optics-mirrors", title: "Mirrors & Lenses",
+        content: `Mirror / lens equation:  1/F = 1/dₒ + 1/dᵢ
+Magnification:           M = hᵢ/hₒ = −dᵢ/dₒ
+
+Sign conventions:
+  Concave mirror → F > 0 (converging)
+  Convex mirror  → F < 0 (diverging)
+  Real image: dᵢ > 0 (forms in front of mirror)
+  Virtual image: dᵢ < 0 (forms behind mirror)
+
+Converging lens: F > 0  |  Diverging lens: F < 0
+
+Ray diagram rules:
+  1. Ray parallel to axis → reflects/refracts through focal point.
+  2. Ray through focal point → reflects/refracts parallel to axis.
+
+Plane mirror: dᵢ = −dₒ, M = 1 (upright, virtual, same size).
+
+Law of Reflection: θ_i = θ_r`,
+        formulas: ["1/F = 1/dₒ + 1/dᵢ", "M = −dᵢ/dₒ", "θᵢ = θᵣ"],
+        flashcards: [
+          { q: "Mirror/lens equation?", a: "1/F = 1/dₒ + 1/dᵢ." },
+          { q: "Magnification formula?", a: "M = −dᵢ/dₒ." },
+          { q: "Concave mirror focal length sign?", a: "Positive (+F); it converges light." },
+          { q: "Convex mirror always produces?", a: "Virtual, upright, reduced image." }
+        ],
+        quiz: [{ q: "dₒ = 30 cm, F = 10 cm — image distance dᵢ?", opts: ["15 cm", "7.5 cm", "60 cm", "20 cm"], ans: 0, exp: "1/10 = 1/30 + 1/dᵢ → 1/dᵢ = 2/30 → dᵢ = 15 cm" }]
+      }
+    ]
+  },
+  modern: {
+    id: "modern", label: "Modern & Nuclear", icon: "💥", color: "#06b6d4",
+    topics: [
+      {
+        id: "bigbang-nuclear", title: "Big Bang, Radioactivity & Nuclear Energy",
+        content: `Big Bang evidence:
+  • Redshift — galaxies moving away (Doppler effect on light).
+  • Hydrogen/Helium ratio ≈ 75% / 25% matches predictions.
+  • Cosmic Microwave Background (CMB) — residual radiation from early universe.
+
+Radioactive decay:
+  Alpha (α): loses 2 protons + 2 neutrons → atomic # −2, mass # −4
+  Beta (β):  neutron → proton + electron → atomic # +1, mass # same
+  Gamma (γ): photon released; no change to Z or A
+
+Mass-energy equivalence: E = mc²
+
+Nuclear fission: heavy nucleus (e.g. U-235) splits → large energy release, chain reaction,
+  controllable in reactors, produces radioactive waste.
+
+Nuclear fusion: light nuclei combine (e.g. ²H + ³H) → even larger energy per unit mass,
+  occurs naturally in stars, not yet commercially controllable, produces no long-lived waste.`,
+        formulas: ["E = mc²", "Alpha: Z−2, A−4", "Beta: Z+1, A unchanged"],
+        flashcards: [
+          { q: "What does galactic redshift indicate?", a: "Galaxies are moving away — evidence for the Big Bang / expanding universe." },
+          { q: "What is the CMB?", a: "Cosmic Microwave Background — leftover thermal radiation from the early universe." },
+          { q: "Alpha decay changes atomic number by?", a: "−2 (and mass number by −4)." },
+          { q: "Fission vs. fusion?", a: "Fission splits heavy nuclei; fusion combines light nuclei. Both release energy." }
+        ],
+        quiz: [{ q: "U-238 undergoes alpha decay — product?", opts: ["Th-234 + He-4", "U-234 + neutron", "Th-236 + He-4", "Pa-234 + electron"], ans: 0, exp: "Alpha decay: Z → Z−2 (U→Th), A → A−4 (238→234), emits He-4." }]
+      }
+    ]
   }
+};
 
-  // Simulation components
-  const EnergyBarSim = () => {
-    const [h, setH] = useState(50);
-    const m=2, g=9.81, totalH=50, pe=m*g*h, totalE=m*g*totalH, ke=totalE-pe;
-    return React.createElement('div', null,
-      React.createElement('p', null, '2 kg ball falling: height slider'),
-      React.createElement('input', { type:'range', min:0, max:50, value:h, onChange:e=>setH(Number(e.target.value)) }),
-      React.createElement('div', { style:{display:'flex', gap:'1rem', marginTop:'0.5rem'} },
-        React.createElement('div', null, `PEg: ${pe.toFixed(0)} J`),
-        React.createElement('div', null, `KE: ${ke.toFixed(0)} J`),
-        React.createElement('div', null, `Total: ${totalE.toFixed(0)} J`)
-      )
-    );
+// ─── Build master flashcard & quiz pools ───
+let ALL_FLASHCARDS = [];
+let ALL_QUIZ = [];
+Object.values(UNITS).forEach(unit => {
+  unit.topics.forEach(topic => {
+    if (topic.flashcards) {
+      topic.flashcards.forEach(f => ALL_FLASHCARDS.push({ ...f, unit: unit.label, topic: topic.title }));
+    }
+    if (topic.quiz) {
+      topic.quiz.forEach(q => ALL_QUIZ.push({ ...q, unit: unit.label, topic: topic.title }));
+    }
+  });
+});
+
+// Extra practice questions
+[
+  { q: "50 kg cart slows from 5 m/s to rest in 5 s — net force?", opts: ["50 N", "250 N", "10 N", "5 N"], ans: 0, exp: "Δp = 50×5 = 250 kg·m/s, F = Δp/Δt = 250/5 = 50 N" },
+  { q: "Two positive charges — the electrostatic force is?", opts: ["Attractive", "Repulsive", "Zero", "Depends on distance"], ans: 1, exp: "Like charges repel each other." },
+  { q: "800 W microwave running for 10 s — energy used?", opts: ["8000 J", "80 J", "8 J", "800 J"], ans: 0, exp: "W = Pt = 800 × 10 = 8000 J" },
+  { q: "A convex (diverging) mirror always produces?", opts: ["Real, inverted image", "Virtual, upright, reduced image", "Virtual, magnified image", "Real, upright image"], ans: 1, exp: "Convex mirrors always produce virtual, upright, reduced images regardless of object distance." },
+  { q: "Photon with higher frequency has?", opts: ["Higher energy", "Lower energy", "Same energy", "Zero energy"], ans: 0, exp: "E = hf — energy is directly proportional to frequency." }
+].forEach(q => ALL_QUIZ.push(q));
+
+// ─────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ─────────────────────────────────────────────
+// SIMULATIONS
+// ─────────────────────────────────────────────
+const EnergyBarSim = () => {
+  const [h, setH] = useState(25);
+  const m = 2, g = 9.81, maxH = 50;
+  const pe = m * g * h;
+  const ke = m * g * maxH - pe;
+  return (
+    <div className="sim-controls">
+      <label>Height: {h} m</label>
+      <input type="range" min={0} max={maxH} value={h} onChange={e => setH(+e.target.value)} />
+      <div className="sim-output">PE<sub>g</sub> = {pe.toFixed(0)} J &nbsp;|&nbsp; KE = {ke.toFixed(0)} J</div>
+    </div>
+  );
+};
+
+const OhmsLawSim = () => {
+  const [v, setV] = useState(12);
+  const [r, setR] = useState(6);
+  const i = (v / r).toFixed(2);
+  const p = (v * v / r).toFixed(1);
+  return (
+    <div className="sim-controls">
+      <label>Voltage: {v} V</label>
+      <input type="range" min={1} max={24} value={v} onChange={e => setV(+e.target.value)} />
+      <label>Resistance: {r} Ω</label>
+      <input type="range" min={1} max={20} value={r} onChange={e => setR(+e.target.value)} />
+      <div className="sim-output">I = {i} A &nbsp;|&nbsp; P = {p} W</div>
+    </div>
+  );
+};
+
+const WaveSim = () => {
+  const [freq, setFreq] = useState(2);
+  const [amp, setAmp] = useState(35);
+  const points = Array.from({ length: 201 }, (_, i) =>
+    `${i * 2},${50 + amp * Math.sin(2 * Math.PI * freq * i / 100)}`
+  ).join(' ');
+  return (
+    <div className="sim-controls">
+      <label>Frequency: {freq} Hz</label>
+      <input type="range" min={1} max={8} value={freq} onChange={e => setFreq(+e.target.value)} />
+      <label>Amplitude: {amp}</label>
+      <input type="range" min={10} max={45} value={amp} onChange={e => setAmp(+e.target.value)} />
+      <svg width="100%" height="100" viewBox="0 0 400 100">
+        <polyline points={points} fill="none" stroke="#8b5cf6" strokeWidth="2" />
+      </svg>
+      <div className="sim-output">λ ≈ {(340 / freq).toFixed(1)} m (at 340 m/s)</div>
+    </div>
+  );
+};
+
+const ProjectileSim = () => {
+  const [angle, setAngle] = useState(45);
+  const [speed, setSpeed] = useState(20);
+  const rad = angle * Math.PI / 180;
+  const vx = speed * Math.cos(rad);
+  const vy = speed * Math.sin(rad);
+  const time = 2 * vy / 9.81;
+  const range = (vx * time).toFixed(1);
+  const maxHeight = (vy * vy / (2 * 9.81)).toFixed(1);
+  return (
+    <div className="sim-controls">
+      <label>Angle: {angle}°</label>
+      <input type="range" min={5} max={85} value={angle} onChange={e => setAngle(+e.target.value)} />
+      <label>Initial speed: {speed} m/s</label>
+      <input type="range" min={5} max={40} value={speed} onChange={e => setSpeed(+e.target.value)} />
+      <div className="sim-output">Range = {range} m &nbsp;|&nbsp; Max height = {maxHeight} m</div>
+    </div>
+  );
+};
+
+const SIMULATIONS = [
+  { id: 'energy', title: 'Energy Conservation', icon: '⚡', comp: EnergyBarSim },
+  { id: 'ohms',  title: "Ohm's Law",            icon: '🔋', comp: OhmsLawSim  },
+  { id: 'wave',  title: 'Wave Properties',       icon: '🌊', comp: WaveSim     },
+  { id: 'proj',  title: 'Projectile Motion',     icon: '🎯', comp: ProjectileSim }
+];
+
+// ─────────────────────────────────────────────
+// MAIN APP
+// ─────────────────────────────────────────────
+const App = () => {
+  // ── navigation ──
+  const [page, setPage] = useState('dashboard');
+
+  // ── learn ──
+  const [activeUnit, setActiveUnit] = useState('foundations');
+  const [activeTopic, setActiveTopic] = useState(null);
+
+  // ── XP / progress ──
+  const [xp, setXp] = useState(() => parseInt(localStorage.getItem('xp') || '0'));
+  const [completed, setCompleted] = useState(() => JSON.parse(localStorage.getItem('completed') || '{}'));
+
+  // ── flashcards ──
+  const [fcDeck, setFcDeck] = useState(() => shuffle(ALL_FLASHCARDS));
+  const [fcIdx,  setFcIdx]  = useState(0);
+  const [fcFlip, setFcFlip] = useState(false);
+
+  // ── quiz ──
+  const [quizActive, setQuizActive] = useState(false);
+  const [quizDeck,   setQuizDeck]   = useState([]);
+  const [quizIdx,    setQuizIdx]    = useState(0);
+  const [quizSel,    setQuizSel]    = useState(null);
+  const [quizScore,  setQuizScore]  = useState(0);
+  const [quizDone,   setQuizDone]   = useState(false);
+
+  // ── exam ──
+  const [examActive,    setExamActive]    = useState(false);
+  const [examAns,       setExamAns]       = useState({});
+  const [examSubmitted, setExamSubmitted] = useState(false);
+  const [examDeck]  = useState(() => shuffle(ALL_QUIZ).slice(0, 20));
+  const [examTime,  setExamTime]  = useState(1800);
+
+  // ── simulations ──
+  const [simActive, setSimActive] = useState(null);
+
+  // ── AI tutor ──
+  const [tutorQ,   setTutorQ]   = useState('');
+  const [tutorA,   setTutorA]   = useState('');
+  const [tutorBusy, setTutorBusy] = useState(false);
+
+  const timerRef = useRef(null);
+
+  // Exam countdown
+  useEffect(() => {
+    if (examActive && !examSubmitted) {
+      timerRef.current = setInterval(() => setExamTime(t => t > 0 ? t - 1 : 0), 1000);
+      return () => clearInterval(timerRef.current);
+    }
+  }, [examActive, examSubmitted]);
+
+  // Auto-submit when time runs out
+  useEffect(() => {
+    if (examActive && !examSubmitted && examTime === 0) submitExam();
+  }, [examTime]);
+
+  // ── helpers ──
+  const addXp = amt => {
+    const n = xp + amt;
+    setXp(n);
+    localStorage.setItem('xp', n);
   };
-  const OhmsLawSim = () => {
-    const [v, setV] = useState(12), [r, setR] = useState(6);
-    const i = v/r, p = v*i;
-    return React.createElement('div', null,
-      React.createElement('div', null, 'Voltage: ', React.createElement('input', { type:'range', min:1, max:24, value:v, onChange:e=>setV(Number(e.target.value)) }), ` ${v} V`),
-      React.createElement('div', null, 'Resistance: ', React.createElement('input', { type:'range', min:1, max:20, value:r, onChange:e=>setR(Number(e.target.value)) }), ` ${r} Ω`),
-      React.createElement('div', null, `Current: ${i.toFixed(2)} A, Power: ${p.toFixed(1)} W`)
-    );
+
+  const markComplete = key => {
+    const c = { ...completed, [key]: true };
+    setCompleted(c);
+    localStorage.setItem('completed', JSON.stringify(c));
   };
-  const WaveSim = () => {
-    const [f, setF] = useState(2), [a, setA] = useState(40);
-    return React.createElement('div', null,
-      React.createElement('div', null, 'Frequency: ', React.createElement('input', { type:'range', min:1, max:8, value:f, onChange:e=>setF(Number(e.target.value)) }), ` ${f} Hz`),
-      React.createElement('div', null, 'Amplitude: ', React.createElement('input', { type:'range', min:10, max:55, value:a, onChange:e=>setA(Number(e.target.value)) }), ` ${a}`),
-      React.createElement('svg', { width:'100%', height:100, viewBox:'0 0 400 100' },
-        React.createElement('polyline', { points: Array.from({length:200}, (_,i)=>`${i*2},${50 + a*Math.sin(2*Math.PI*f*i/100)}`).join(' '), fill:'none', stroke:'#8b5cf6', strokeWidth:2 })
-      )
-    );
+
+  const level     = Math.floor(xp / 100) + 1;
+  const xpToNext  = 100 - (xp % 100);
+  const totalTopics    = Object.values(UNITS).reduce((s, u) => s + u.topics.length, 0);
+  const completedCount = Object.keys(completed).length;
+
+  const formatTime = s =>
+    `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
+
+  // ── quiz logic ──
+  const startQuiz = filter => {
+    const pool = filter === 'all' ? ALL_QUIZ : ALL_QUIZ.filter(q => q.unit === filter);
+    setQuizDeck(shuffle(pool).slice(0, 10));
+    setQuizIdx(0);
+    setQuizSel(null);
+    setQuizScore(0);
+    setQuizDone(false);
+    setQuizActive(true);
+    setPage('quiz');
   };
-  const ProjectileSim = () => {
-    const [angle, setAngle] = useState(45), [speed, setSpeed] = useState(20);
-    const rad = angle*Math.PI/180, vx=speed*Math.cos(rad), vy=speed*Math.sin(rad), tF=2*vy/9.81, range=vx*tF;
-    return React.createElement('div', null,
-      React.createElement('div', null, 'Angle: ', React.createElement('input', { type:'range', min:10, max:80, value:angle, onChange:e=>setAngle(Number(e.target.value)) }), ` ${angle}°`),
-      React.createElement('div', null, 'Speed: ', React.createElement('input', { type:'range', min:5, max:40, value:speed, onChange:e=>setSpeed(Number(e.target.value)) }), ` ${speed} m/s`),
-      React.createElement('div', null, `Range: ${range.toFixed(1)} m, Max Height: ${(vy*vy/(2*9.81)).toFixed(1)} m`)
-    );
+
+  const handleQuizSelect = idx => {
+    if (quizSel !== null) return;
+    setQuizSel(idx);
+    if (idx === quizDeck[quizIdx].ans) {
+      setQuizScore(s => s + 1);
+      addXp(10);
+    }
   };
-  const SIMULATIONS = [
-    { id:'energy', title:'Energy Bar Chart', comp:EnergyBarSim, icon:'⚡' },
-    { id:'ohms', title:'Ohm\'s Law', comp:OhmsLawSim, icon:'🔋' },
-    { id:'wave', title:'Wave Properties', comp:WaveSim, icon:'🌊' },
-    { id:'projectile', title:'Projectile Motion', comp:ProjectileSim, icon:'🎯' }
+
+  const nextQuiz = () => {
+    if (quizIdx + 1 >= quizDeck.length) {
+      setQuizDone(true);
+      addXp(20);
+    } else {
+      setQuizIdx(i => i + 1);
+      setQuizSel(null);
+    }
+  };
+
+  // ── exam logic ──
+  const submitExam = () => {
+    clearInterval(timerRef.current);
+    setExamSubmitted(true);
+    const correct = examDeck.filter((q, i) => examAns[i] === q.ans).length;
+    addXp(correct * 15);
+  };
+
+  // ── AI tutor ──
+  const askTutor = async () => {
+    if (!tutorQ.trim() || tutorBusy) return;
+    setTutorBusy(true);
+    setTutorA('');
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          system: 'You are a helpful, concise tutor for New York Regents Physics (high school level). Explain concepts clearly and include relevant formulas. Keep answers under 200 words.',
+          messages: [{ role: 'user', content: tutorQ }]
+        })
+      });
+      const data = await res.json();
+      const text = data.content?.map(b => b.text || '').join('') || 'No response received.';
+      setTutorA(text);
+    } catch (err) {
+      setTutorA('Error reaching AI. Check your connection and try again.');
+    }
+    setTutorBusy(false);
+  };
+
+  // ── nav items ──
+  const NAV = [
+    { id: 'dashboard',   label: '🏠 Dashboard'   },
+    { id: 'learn',       label: '📖 Learn'        },
+    { id: 'simulations', label: '🔬 Simulations'  },
+    { id: 'flashcards',  label: '🃏 Flashcards'   },
+    { id: 'quiz',        label: '❓ Quiz'         },
+    { id: 'exam',        label: '📝 Exam Mode'    },
+    { id: 'formulas',    label: '📐 Formulas'     },
+    { id: 'ai-tutor',    label: '🤖 AI Tutor'     },
   ];
 
-  // Main App
-  const App = () => {
-    const [page, setPage] = useState('dashboard');
-    const [activeUnit, setActiveUnit] = useState('energy');
-    const [activeTopic, setActiveTopic] = useState(null);
-    const [xp, setXp] = useState(() => parseInt(localStorage.getItem('xp')||'0'));
-    const [completed, setCompleted] = useState(() => JSON.parse(localStorage.getItem('completed')||'{}'));
-    const [fcDeck, setFcDeck] = useState(() => shuffle(ALL_FLASHCARDS));
-    const [fcIdx, setFcIdx] = useState(0);
-    const [fcFlip, setFcFlip] = useState(false);
-    const [quizMode, setQuizMode] = useState(false);
-    const [quizDeck, setQuizDeck] = useState([]);
-    const [quizIdx, setQuizIdx] = useState(0);
-    const [quizSelected, setQuizSelected] = useState(null);
-    const [quizScore, setQuizScore] = useState(0);
-    const [quizDone, setQuizDone] = useState(false);
-    const [examMode, setExamMode] = useState(false);
-    const [examAnswers, setExamAnswers] = useState({});
-    const [examSubmitted, setExamSubmitted] = useState(false);
-    const [examDeck] = useState(() => shuffle(ALL_QUIZ).slice(0,20));
-    const [examTime, setExamTime] = useState(1800);
-    const [simActive, setSimActive] = useState(null);
-    const timerRef = useRef(null);
-
-    useEffect(() => {
-      if (examMode && !examSubmitted) {
-        timerRef.current = setInterval(() => setExamTime(t=>t>0?t-1:0), 1000);
-        return () => clearInterval(timerRef.current);
-      }
-    }, [examMode, examSubmitted]);
-
-    const addXp = (amt) => {
-      let n = xp + amt;
-      setXp(n);
-      localStorage.setItem('xp', n);
-    };
-    const markComplete = (key) => {
-      let c = {...completed, [key]: true};
-      setCompleted(c);
-      localStorage.setItem('completed', JSON.stringify(c));
-    };
-    const level = Math.floor(xp/100)+1;
-    const xpToNext = 100 - (xp%100);
-    const totalTopics = Object.values(UNITS).reduce((s,u)=>s+u.topics.length,0);
-    const completedCount = Object.keys(completed).length;
-
-    const startQuiz = (filter) => {
-      let pool = filter==='all' ? ALL_QUIZ : ALL_QUIZ.filter(q=>q.unit===filter);
-      setQuizDeck(shuffle(pool).slice(0,10));
-      setQuizIdx(0);
-      setQuizSelected(null);
-      setQuizScore(0);
-      setQuizDone(false);
-      setQuizMode(true);
-      setPage('quiz');
-    };
-    const handleQuizAnswer = (idx) => {
-      if (quizSelected !== null) return;
-      setQuizSelected(idx);
-      if (idx === quizDeck[quizIdx].ans) {
-        setQuizScore(s=>s+1);
-        addXp(10);
-      }
-    };
-    const nextQuestion = () => {
-      if (quizIdx+1 >= quizDeck.length) {
-        setQuizDone(true);
-        addXp(20);
-      } else {
-        setQuizIdx(i=>i+1);
-        setQuizSelected(null);
-      }
-    };
-    const submitExam = () => {
-      clearInterval(timerRef.current);
-      setExamSubmitted(true);
-      let correct = examDeck.filter((q,i)=>examAnswers[i]===q.ans).length;
-      addXp(correct*15);
-    };
-    const formatTime = (s) => `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
-    const allFormulas = [];
-    Object.values(UNITS).forEach(u=>u.topics.forEach(t=>t.formulas?.forEach(f=>allFormulas.push({...f, unit:u.label, topic:t.title}))));
-
-    const nav = ['dashboard','learn','simulations','flashcards','quiz','exam','formulas','ai-tutor'];
-    const navLabels = { dashboard:'🏠 Dashboard', learn:'📖 Learn', simulations:'🔬 Simulations', flashcards:'🃏 Flashcards', quiz:'❓ Quiz', exam:'📝 Exam Mode', formulas:'📐 Formulas', 'ai-tutor':'🤖 AI Tutor' };
-
-    return React.createElement('div', null,
-      React.createElement('div', { className:'header' },
-        React.createElement('div', { className:'logo' }, '⚛️ Physics Regents Prep'),
-        React.createElement('div', { className:'nav' }, nav.map(p=>React.createElement('button', { key:p, className:`nav-btn ${page===p?'active':''}`, onClick:()=>{setPage(p); setQuizMode(false); setExamMode(false);} }, navLabels[p]))),
-        React.createElement('div', { className:'xp-badge' }, `🔥 3 day streak · Lv.${level} · ${xp} XP`)
-      ),
-      React.createElement('div', { className:'container' },
-        page === 'dashboard' && React.createElement('div', null,
-          React.createElement('h1', null, 'Your study dashboard'),
-          React.createElement('div', { style:{marginBottom:'1rem'} },
-            React.createElement('iframe', { width:'100%', height:'200', src:'https://www.youtube.com/embed/IYruBR8nDjk', title:'YouTube', frameBorder:'0', allow:'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture', allowFullScreen:true, style:{borderRadius:'0.5rem'} })
-          ),
-          React.createElement('div', { className:'grid-2' },
-            React.createElement('div', { className:'card' }, '⭐ XP: ', xp),
-            React.createElement('div', { className:'card' }, '🏆 Level: ', level),
-            React.createElement('div', { className:'card' }, '✅ Topics: ', completedCount, '/', totalTopics),
-            React.createElement('div', { className:'card' }, '⬆️ XP to next: ', xpToNext)
-          ),
-          React.createElement('div', { className:'card' },
-            React.createElement('div', null, `Level ${level} progress`),
-            React.createElement('div', { className:'progress-bar' }, React.createElement('div', { className:'progress-fill', style:{width:`${xp%100}%`} }))
-          ),
-          React.createElement('h2', null, 'Units'),
-          React.createElement('div', { className:'grid-2' }, Object.values(UNITS).map(u=>React.createElement('div', { key:u.id, className:'card', style:{cursor:'pointer'}, onClick:()=>{setPage('learn'); setActiveUnit(u.id); setActiveTopic(null);} },
-            React.createElement('div', { style:{fontSize:'2rem'} }, u.icon),
-            React.createElement('h3', null, u.label),
-            React.createElement('div', null, u.topics.length, ' topics'),
-            React.createElement('div', { className:'progress-bar' }, React.createElement('div', { className:'progress-fill', style:{width:`${(u.topics.filter(t=>completed[`${u.id}-${t.id}`]).length/u.topics.length)*100}%`, background:u.color} }))
-          ))),
-          React.createElement('h2', null, 'Quick actions'),
-          React.createElement('div', { className:'grid-2' },
-            React.createElement('button', { className:'card', onClick:()=>{setFcDeck(shuffle(ALL_FLASHCARDS)); setFcIdx(0); setFcFlip(false); setPage('flashcards');} }, '🃏 Random flashcards'),
-            React.createElement('button', { className:'card', onClick:()=>startQuiz('all') }, '❓ Quick quiz'),
-            React.createElement('button', { className:'card', onClick:()=>{setExamMode(true); setPage('exam');} }, '📝 Practice exam'),
-            React.createElement('button', { className:'card', onClick:()=>setPage('formulas') }, '📐 View formulas')
-          )
-        ),
-        page === 'learn' && React.createElement('div', { style:{display:'grid', gridTemplateColumns: activeTopic ? '250px 1fr' : '1fr', gap:'1rem'} },
-          React.createElement('div', null,
-            React.createElement('h2', null, 'Units & Topics'),
-            Object.values(UNITS).map(u=>React.createElement('div', { key:u.id, style:{marginBottom:'1rem'} },
-              React.createElement('button', { style:{width:'100%', textAlign:'left', padding:'0.5rem', background: activeUnit===u.id ? '#eff6ff' : '#f8fafc', border:'1px solid #e2e8f0', borderRadius:'0.5rem', fontWeight:'bold'}, onClick:()=>setActiveUnit(activeUnit===u.id ? null : u.id) }, u.icon, ' ', u.label),
-              activeUnit===u.id && React.createElement('div', { style:{marginTop:'0.25rem'} }, u.topics.map(t=>React.createElement('button', { key:t.id, style:{display:'block', width:'100%', textAlign:'left', padding:'0.4rem 0.4rem 0.4rem 1.5rem', background: activeTopic?.id===t.id ? 'white' : 'transparent', border:'none', borderRadius:'0.25rem', cursor:'pointer', color: completed[`${u.id}-${t.id}`] ? '#166534' : '#475569' }, onClick:()=>{setActiveTopic(t); markComplete(`${u.id}-${t.id}`); addXp(5);} }, completed[`${u.id}-${t.id}`] ? '✅ ' : '○ ', t.title })))
-            ))
-          ),
-          activeTopic ? React.createElement('div', { className:'card' },
-            React.createElement('h2', null, activeTopic.title),
-            React.createElement('div', { className:'prose', style:{whiteSpace:'pre-wrap'} }, activeTopic.content),
-            activeTopic.formulas && React.createElement('div', null,
-              React.createElement('h3', null, 'Key formulas'),
-              React.createElement('div', { className:'grid-2' }, activeTopic.formulas.map((f,i)=>React.createElement('div', { key:i, style:{background:'#f8fafc', padding:'0.5rem', borderRadius:'0.5rem'} }, React.createElement('div', { style:{fontWeight:'bold'} }, f.name), React.createElement('code', null, f), React.createElement('div', { style:{fontSize:'0.75rem', color:'#475569'} }, f.vars||''))))
-            ),
-            React.createElement('div', { style:{marginTop:'1rem', display:'flex', gap:'0.5rem'} },
-              React.createElement('button', { className:'card', style:{padding:'0.5rem 1rem'}, onClick:()=>{setFcDeck(shuffle(activeTopic.flashcards?.map(f=>({q:f, a:'See content'}))||[])); setPage('flashcards');} }, '🃏 Study flashcards'),
-              React.createElement('button', { className:'card', style:{padding:'0.5rem 1rem'}, onClick:()=>startQuiz(UNITS[activeUnit]?.label) }, '❓ Practice quiz')
-            )
-          ) : React.createElement('div', { className:'card', style:{textAlign:'center'} }, 'Select a topic from the left')
-        ),
-        page === 'simulations' && React.createElement('div', null,
-          React.createElement('h1', null, 'Interactive simulations'),
-          React.createElement('div', { className:'grid-2' }, SIMULATIONS.map(s=>React.createElement('button', { key:s.id, className:'card', onClick:()=>setSimActive(simActive===s.id?null:s.id) }, s.icon, ' ', s.title, React.createElement('div', { style:{fontSize:'0.75rem', color:'#475569'} }, s.comp.name))),
-          simActive && React.createElement('div', { className:'card' }, React.createElement(SIMULATIONS.find(s=>s.id===simActive).comp, null))
-        ),
-        page === 'flashcards' && React.createElement('div', null,
-          React.createElement('h1', null, 'Flashcards'),
-          React.createElement('div', { className:'flashcard', onClick:()=>setFcFlip(!fcFlip) }, fcFlip ? (fcDeck[fcIdx]?.a || 'Answer') : (fcDeck[fcIdx]?.q || 'No cards')),
-          React.createElement('div', { style:{display:'flex', justifyContent:'center', gap:'1rem', marginTop:'1rem'} },
-            React.createElement('button', { onClick:()=>{if(fcIdx>0){setFcIdx(fcIdx-1); setFcFlip(false);}} }, '← Prev'),
-            React.createElement('button', { onClick:()=>{if(fcIdx<fcDeck.length-1){setFcIdx(fcIdx+1); setFcFlip(false);}else{setFcIdx(0); setFcFlip(false);}} }, 'Next →')
-          )
-        ),
-        page === 'quiz' && React.createElement('div', null,
-          !quizMode ? React.createElement('div', null,
-            React.createElement('h1', null, 'Quiz'),
-            React.createElement('div', { className:'grid-2' },
-              React.createElement('button', { className:'card', onClick:()=>startQuiz('all') }, 'All units'),
-              Object.values(UNITS).map(u=>React.createElement('button', { key:u.id, className:'card', onClick:()=>startQuiz(u.label) }, u.icon, ' ', u.label))
-            )
-          ) : quizDone ? React.createElement('div', { className:'card', style:{textAlign:'center'} },
-            React.createElement('div', { style:{fontSize:'3rem'} }, quizScore>=8?'🏆':'👍'),
-            React.createElement('h2', null, `${quizScore}/${quizDeck.length} correct`),
-            React.createElement('p', null, `+${quizScore*10+20} XP`),
-            React.createElement('button', { onClick:()=>startQuiz('all') }, 'Try again')
-          ) : React.createElement('div', null,
-            React.createElement('div', { style:{display:'flex', justifyContent:'space-between'} }, React.createElement('span', null, `Question ${quizIdx+1}/${quizDeck.length}`), React.createElement('span', null, `${quizScore} correct`)),
-            React.createElement('div', { className:'progress-bar' }, React.createElement('div', { className:'progress-fill', style:{width:`${(quizIdx/quizDeck.length)*100}%`} })),
-            React.createElement('div', { className:'card' }, React.createElement('p', { style:{fontWeight:'bold'} }, quizDeck[quizIdx]?.q), React.createElement('div', { className:'grid-2', style:{marginTop:'1rem'} }, quizDeck[quizIdx]?.opts.map((opt,i)=>React.createElement('button', { key:i, className:`quiz-option ${quizSelected!==null ? (i===quizDeck[quizIdx].ans ? 'correct' : (i===quizSelected ? 'wrong' : '')) : ''}`, onClick:()=>handleQuizAnswer(i), disabled:quizSelected!==null }, opt)))),
-            quizSelected!==null && React.createElement('div', { className:'card', style:{background: quizSelected===quizDeck[quizIdx].ans ? '#dcfce7' : '#fee2e2'} }, React.createElement('p', null, quizDeck[quizIdx].exp), React.createElement('button', { onClick:nextQuestion }, quizIdx+1>=quizDeck.length ? 'See results' : 'Next question'))
-          )
-        ),
-        page === 'exam' && React.createElement('div', null,
-          !examMode ? React.createElement('div', { className:'card', style:{textAlign:'center'} }, React.createElement('h1', null, 'Regents Exam Simulator'), React.createElement('p', null, '20 questions, 30 minutes'), React.createElement('button', { onClick:()=>{setExamMode(true); setExamTime(1800); setExamAnswers({}); setExamSubmitted(false);} }, 'Start exam')) :
-          examSubmitted ? React.createElement('div', null,
-            React.createElement('div', { className:'card', style:{textAlign:'center'} }, React.createElement('h2', null, `${examDeck.filter((_,i)=>examAnswers[i]===examDeck[i].ans).length}/${examDeck.length}`), React.createElement('button', { onClick:()=>{setExamMode(false);} }, 'Retake exam')),
-            examDeck.map((q,i)=>React.createElement('div', { key:i, className:'card', style:{borderLeft: `4px solid ${examAnswers[i]===q.ans ? '#22c55e' : '#ef4444'}`} }, React.createElement('p', null, `${i+1}. ${q.q}`), React.createElement('p', null, `Your answer: ${q.opts[examAnswers[i]] || 'Not answered'}`, examAnswers[i]!==q.ans && React.createElement('span', null, ` Correct: ${q.opts[q.ans]}`)), React.createElement('p', { style:{fontSize:'0.75rem'} }, q.exp)))
-          ) : React.createElement('div', null,
-            React.createElement('div', { style:{display:'flex', justifyContent:'space-between'} }, React.createElement('span', null, `Time: ${formatTime(examTime)}`), React.createElement('span', null, `${Object.keys(examAnswers).length}/${examDeck.length} answered`)),
-            examDeck.map((q,i)=>React.createElement('div', { key:i, className:'card' }, React.createElement('p', null, `${i+1}. ${q.q}`), React.createElement('div', { className:'grid-2' }, q.opts.map((opt,j)=>React.createElement('button', { key:j, className:`quiz-option ${examAnswers[i]===j ? 'active' : ''}`, style:{background:examAnswers[i]===j ? '#eff6ff' : 'white'}, onClick:()=>setExamAnswers({...examAnswers, [i]:j}) }, opt))) )),
-            React.createElement('button', { style:{width:'100%', padding:'0.75rem', marginTop:'1rem'}, onClick:submitExam }, 'Submit exam')
-          )
-        ),
-        page === 'formulas' && React.createElement('div', null,
-          React.createElement('h1', null, 'Formula reference'),
-          Object.values(UNITS).map(u=>React.createElement('div', { key:u.id }, React.createElement('h2', null, u.icon, ' ', u.label), React.createElement('div', { className:'grid-2' }, allFormulas.filter(f=>f.unit===u.label).map((f,i)=>React.createElement('div', { key:i, className:'card' }, React.createElement('h3', null, f.name), React.createElement('code', null, f.eq), React.createElement('div', { style:{fontSize:'0.75rem'} }, f.vars))))))
-        ),
-        page === 'ai-tutor' && React.createElement('div', { className:'card' }, React.createElement('h1', null, 'AI Tutor'), React.createElement('p', null, 'Ask any Regents physics question. (Demo mode – add API key for live responses)'), React.createElement('textarea', { rows:4, style:{width:'100%'}, placeholder:'Ask about physics...' }), React.createElement('button', null, 'Ask'))
-      )
-    );
+  const navigate = p => {
+    setPage(p);
+    if (p !== 'quiz') setQuizActive(false);
+    if (p !== 'exam') setExamActive(false);
   };
 
-  ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
-</script>
+  // ─────────────────────────────────────────────
+  // RENDER
+  // ─────────────────────────────────────────────
+  return (
+    <div>
+      {/* ── HEADER ── */}
+      <div className="header">
+        <div className="logo">⚛️ Physics Regents Prep</div>
+        <div className="nav">
+          {NAV.map(n => (
+            <button key={n.id} className={`nav-btn ${page === n.id ? 'active' : ''}`} onClick={() => navigate(n.id)}>
+              {n.label}
+            </button>
+          ))}
+        </div>
+        <div className="xp-badge">🔥 Lv.{level} · {xp} XP · {xpToNext} to next</div>
+      </div>
+
+      {/* ── PAGES ── */}
+      <div className="container">
+
+        {/* ───── DASHBOARD ───── */}
+        {page === 'dashboard' && (
+          <div>
+            <h1>Your Study Dashboard</h1>
+            <iframe
+              className="yt-embed"
+              src="https://www.youtube.com/embed/IYruBR8nDjk"
+              title="Physics overview"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+            <div className="grid-2">
+              <div className="card">⭐ XP: {xp}</div>
+              <div className="card">🏆 Level: {level}</div>
+              <div className="card">✅ Topics done: {completedCount} / {totalTopics}</div>
+              <div className="card">⬆️ Next level: {xpToNext} XP away</div>
+            </div>
+            <div className="card">
+              <div>Level {level} progress</div>
+              <div className="progress-bar">
+                <div className="progress-fill" style={{ width: `${xp % 100}%` }} />
+              </div>
+            </div>
+
+            <h2>Units</h2>
+            <div className="grid-2">
+              {Object.values(UNITS).map(u => {
+                const done = u.topics.filter(t => completed[`${u.id}-${t.id}`]).length;
+                return (
+                  <div
+                    key={u.id}
+                    className="card"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => { setPage('learn'); setActiveUnit(u.id); setActiveTopic(null); }}
+                  >
+                    <div style={{ fontSize: '2rem' }}>{u.icon}</div>
+                    <h3>{u.label}</h3>
+                    <div style={{ fontSize: '0.85rem', color: '#64748b' }}>{u.topics.length} topics</div>
+                    <div className="progress-bar">
+                      <div className="progress-fill" style={{ width: `${(done / u.topics.length) * 100}%`, background: u.color }} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <h2>Quick Actions</h2>
+            <div className="grid-2">
+              <button className="card" onClick={() => { setFcDeck(shuffle(ALL_FLASHCARDS)); setFcIdx(0); setFcFlip(false); setPage('flashcards'); }}>🃏 Study Flashcards</button>
+              <button className="card" onClick={() => startQuiz('all')}>❓ Take a Quiz</button>
+              <button className="card" onClick={() => { setExamActive(true); setExamAns({}); setExamSubmitted(false); setExamTime(1800); setPage('exam'); }}>📝 Practice Exam</button>
+              <button className="card" onClick={() => setPage('formulas')}>📐 Formula Sheet</button>
+            </div>
+          </div>
+        )}
+
+        {/* ───── LEARN ───── */}
+        {page === 'learn' && (
+          <div className={activeTopic ? 'learn-layout' : ''}>
+            <div>
+              <h2>Units & Topics</h2>
+              {Object.values(UNITS).map(u => (
+                <div key={u.id} style={{ marginBottom: '0.75rem' }}>
+                  <button
+                    className={`sidebar-unit-btn ${activeUnit === u.id ? 'open' : ''}`}
+                    onClick={() => setActiveUnit(activeUnit === u.id ? null : u.id)}
+                  >
+                    {u.icon} {u.label}
+                  </button>
+                  {activeUnit === u.id && (
+                    <div style={{ marginTop: '0.25rem' }}>
+                      {u.topics.map(t => (
+                        <button
+                          key={t.id}
+                          className={`sidebar-topic-btn ${activeTopic?.id === t.id ? 'active' : ''} ${completed[`${u.id}-${t.id}`] ? 'done' : ''}`}
+                          onClick={() => { setActiveTopic(t); markComplete(`${u.id}-${t.id}`); addXp(5); }}
+                        >
+                          {completed[`${u.id}-${t.id}`] ? '✅ ' : '○ '}{t.title}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {activeTopic ? (
+              <div className="card">
+                <h2>{activeTopic.title}</h2>
+                <div className="prose" style={{ whiteSpace: 'pre-wrap', marginBottom: '1rem' }}>{activeTopic.content}</div>
+                {activeTopic.formulas && (
+                  <div>
+                    <h3>Key Formulas</h3>
+                    <div className="grid-2">
+                      {activeTopic.formulas.map((f, i) => (
+                        <div key={i} style={{ background: '#f8fafc', padding: '0.5rem', borderRadius: '0.5rem' }}>
+                          <code>{f}</code>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  <button
+                    className="card"
+                    style={{ padding: '0.5rem 1rem', margin: 0 }}
+                    onClick={() => {
+                      setFcDeck(shuffle(activeTopic.flashcards || []));
+                      setFcIdx(0); setFcFlip(false);
+                      setPage('flashcards');
+                    }}
+                  >🃏 Study Cards</button>
+                  <button
+                    className="card"
+                    style={{ padding: '0.5rem 1rem', margin: 0 }}
+                    onClick={() => startQuiz(UNITS[activeUnit]?.label)}
+                  >❓ Quiz This Unit</button>
+                </div>
+              </div>
+            ) : (
+              <div className="card text-center" style={{ display: activeTopic ? 'block' : 'none' }}>Select a topic on the left</div>
+            )}
+            {!activeTopic && (
+              <div className="card text-center" style={{ marginTop: '1rem' }}>
+                <p>Select a topic from the left to start reading.</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ───── SIMULATIONS ───── */}
+        {page === 'simulations' && (
+          <div>
+            <h1>Interactive Simulations</h1>
+            <div className="grid-2">
+              {SIMULATIONS.map(s => (
+                <div key={s.id} className="card" style={{ cursor: 'pointer' }} onClick={() => setSimActive(simActive === s.id ? null : s.id)}>
+                  <div style={{ fontSize: '1.5rem' }}>{s.icon}</div>
+                  <h3>{s.title}</h3>
+                  {simActive === s.id && (
+                    <div style={{ marginTop: '1rem' }}>
+                      <s.comp />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ───── FLASHCARDS ───── */}
+        {page === 'flashcards' && (
+          <div>
+            <h1>Flashcards</h1>
+            <p style={{ marginBottom: '0.75rem', color: '#64748b', fontSize: '0.85rem' }}>Click the card to flip it.</p>
+            {fcDeck.length > 0 ? (
+              <>
+                <div className="flashcard" onClick={() => setFcFlip(!fcFlip)}>
+                  {fcFlip
+                    ? (fcDeck[fcIdx]?.a || 'No answer')
+                    : (fcDeck[fcIdx]?.q || 'No question')}
+                </div>
+                <div style={{ textAlign: 'center', marginTop: '0.5rem', color: '#94a3b8', fontSize: '0.8rem' }}>
+                  {fcIdx + 1} / {fcDeck.length}
+                </div>
+                <div className="flex-row" style={{ justifyContent: 'center', marginTop: '0.75rem' }}>
+                  <button className="card" style={{ padding: '0.5rem 1.5rem', margin: 0 }}
+                    onClick={() => { if (fcIdx > 0) { setFcIdx(fcIdx - 1); setFcFlip(false); } }}>← Prev</button>
+                  <button className="card" style={{ padding: '0.5rem 1.5rem', margin: 0 }}
+                    onClick={() => { setFcIdx((fcIdx + 1) % fcDeck.length); setFcFlip(false); }}>Next →</button>
+                  <button className="card" style={{ padding: '0.5rem 1.5rem', margin: 0 }}
+                    onClick={() => { setFcDeck(shuffle(ALL_FLASHCARDS)); setFcIdx(0); setFcFlip(false); }}>🔀 Shuffle</button>
+                </div>
+              </>
+            ) : (
+              <p>No flashcards available.</p>
+            )}
+          </div>
+        )}
+
+        {/* ───── QUIZ ───── */}
+        {page === 'quiz' && (
+          <div>
+            {!quizActive ? (
+              <div>
+                <h1>Choose a Quiz</h1>
+                <div className="grid-2">
+                  <button className="card" onClick={() => startQuiz('all')}>🌐 All Units</button>
+                  {Object.values(UNITS).map(u => (
+                    <button key={u.id} className="card" onClick={() => startQuiz(u.label)}>{u.icon} {u.label}</button>
+                  ))}
+                </div>
+              </div>
+            ) : quizDone ? (
+              <div className="card text-center">
+                <div style={{ fontSize: '3rem' }}>{quizScore >= 8 ? '🏆' : quizScore >= 5 ? '👍' : '📚'}</div>
+                <h2>{quizScore} / {quizDeck.length} correct</h2>
+                <p style={{ margin: '0.5rem 0' }}>+{quizScore * 10 + 20} XP earned</p>
+                <button className="card" style={{ display: 'inline-block', margin: '0.5rem auto 0' }} onClick={() => startQuiz('all')}>Try Again</button>
+              </div>
+            ) : (
+              <div>
+                <div className="flex-between" style={{ marginBottom: '0.25rem' }}>
+                  <span>Question {quizIdx + 1} / {quizDeck.length}</span>
+                  <span>✅ {quizScore} correct</span>
+                </div>
+                <div className="progress-bar">
+                  <div className="progress-fill" style={{ width: `${(quizIdx / quizDeck.length) * 100}%` }} />
+                </div>
+                <div className="card">
+                  <p style={{ fontWeight: 'bold', marginBottom: '1rem' }}>{quizDeck[quizIdx]?.q}</p>
+                  <div className="grid-2">
+                    {quizDeck[quizIdx]?.opts.map((opt, i) => (
+                      <button
+                        key={i}
+                        className={`quiz-option ${quizSel !== null ? (i === quizDeck[quizIdx].ans ? 'correct' : (i === quizSel ? 'wrong' : '')) : ''}`}
+                        onClick={() => handleQuizSelect(i)}
+                        disabled={quizSel !== null}
+                      >{opt}</button>
+                    ))}
+                  </div>
+                </div>
+                {quizSel !== null && (
+                  <div className={quizSel === quizDeck[quizIdx].ans ? 'feedback-correct' : 'feedback-wrong'}>
+                    <p style={{ fontWeight: 600 }}>{quizSel === quizDeck[quizIdx].ans ? '✅ Correct!' : '❌ Incorrect'}</p>
+                    <p style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>{quizDeck[quizIdx].exp}</p>
+                    <button
+                      className="card"
+                      style={{ display: 'inline-block', marginTop: '0.5rem', padding: '0.4rem 1rem' }}
+                      onClick={nextQuiz}
+                    >{quizIdx + 1 >= quizDeck.length ? 'See Results' : 'Next →'}</button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ───── EXAM ───── */}
+        {page === 'exam' && (
+          <div>
+            {!examActive ? (
+              <div className="card text-center">
+                <h1>Practice Regents Exam</h1>
+                <p style={{ margin: '0.75rem 0' }}>20 questions · 30 minute timer · covers all units</p>
+                <button
+                  className="card"
+                  style={{ display: 'inline-block', padding: '0.6rem 1.5rem', margin: 0 }}
+                  onClick={() => { setExamActive(true); setExamAns({}); setExamSubmitted(false); setExamTime(1800); }}
+                >Start Exam</button>
+              </div>
+            ) : examSubmitted ? (
+              <div>
+                <div className="card text-center">
+                  <h2>Score: {examDeck.filter((_, i) => examAns[i] === examDeck[i].ans).length} / {examDeck.length}</h2>
+                  <p style={{ margin: '0.5rem 0' }}>+{examDeck.filter((_, i) => examAns[i] === examDeck[i].ans).length * 15} XP</p>
+                  <button className="card" style={{ display: 'inline-block', padding: '0.5rem 1.25rem', margin: 0 }} onClick={() => setExamActive(false)}>Retake</button>
+                </div>
+                {examDeck.map((q, i) => (
+                  <div key={i} className="card" style={{ borderLeft: `4px solid ${examAns[i] === q.ans ? '#22c55e' : '#ef4444'}` }}>
+                    <p><strong>{i + 1}. {q.q}</strong></p>
+                    <p style={{ fontSize: '0.85rem', marginTop: '0.25rem' }}>
+                      Your answer: {q.opts[examAns[i]] || '(blank)'}
+                      {examAns[i] !== q.ans && <span style={{ color: '#16a34a' }}> · Correct: {q.opts[q.ans]}</span>}
+                    </p>
+                    <p style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.2rem' }}>{q.exp}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div>
+                <div className="flex-between" style={{ marginBottom: '0.75rem' }}>
+                  <span style={{ fontWeight: 600 }}>⏱ {formatTime(examTime)}</span>
+                  <span>{Object.keys(examAns).length} / {examDeck.length} answered</span>
+                </div>
+                {examDeck.map((q, i) => (
+                  <div key={i} className="card">
+                    <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>{i + 1}. {q.q}</p>
+                    <div className="grid-2">
+                      {q.opts.map((opt, j) => (
+                        <button
+                          key={j}
+                          className="quiz-option"
+                          style={{ background: examAns[i] === j ? '#eff6ff' : 'white', borderColor: examAns[i] === j ? '#3b82f6' : '#e2e8f0' }}
+                          onClick={() => setExamAns({ ...examAns, [i]: j })}
+                        >{opt}</button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+                <button
+                  style={{ width: '100%', padding: '0.75rem', background: '#1d4ed8', color: 'white', border: 'none', borderRadius: '0.5rem', fontWeight: 600, fontSize: '1rem', marginTop: '0.5rem' }}
+                  onClick={submitExam}
+                >Submit Exam</button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ───── FORMULAS ───── */}
+        {page === 'formulas' && (
+          <div>
+            <h1>Formula Reference Sheet</h1>
+            {Object.values(UNITS).map(u => (
+              <div key={u.id}>
+                <h2 style={{ color: u.color }}>{u.icon} {u.label}</h2>
+                <div className="grid-2" style={{ marginBottom: '1rem' }}>
+                  {u.topics.flatMap(t =>
+                    (t.formulas || []).map((f, i) => (
+                      <div key={`${u.id}-${t.id}-${i}`} className="card" style={{ padding: '0.75rem' }}>
+                        <code style={{ fontSize: '0.95rem' }}>{f}</code>
+                        <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginTop: '0.2rem' }}>{t.title}</div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ───── AI TUTOR ───── */}
+        {page === 'ai-tutor' && (
+          <div>
+            <h1>AI Tutor</h1>
+            <div className="card">
+              <p style={{ marginBottom: '0.75rem', color: '#64748b', fontSize: '0.85rem' }}>
+                Ask any Regents Physics question and get a clear, concise explanation.
+              </p>
+              <textarea
+                rows={4}
+                style={{ width: '100%', padding: '0.75rem', border: '1px solid #e2e8f0', borderRadius: '0.5rem', fontSize: '0.9rem', resize: 'vertical', fontFamily: 'inherit' }}
+                placeholder="e.g. Explain conservation of momentum with an example."
+                value={tutorQ}
+                onChange={e => setTutorQ(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) askTutor(); }}
+              />
+              <button
+                style={{ marginTop: '0.5rem', padding: '0.6rem 1.5rem', background: '#1d4ed8', color: 'white', border: 'none', borderRadius: '0.5rem', fontWeight: 600, opacity: tutorBusy ? 0.6 : 1 }}
+                onClick={askTutor}
+                disabled={tutorBusy}
+              >{tutorBusy ? 'Thinking…' : 'Ask'}</button>
+            </div>
+            {tutorA && (
+              <div className="card" style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
+                <strong>Answer:</strong>
+                <div style={{ marginTop: '0.5rem' }}>{tutorA}</div>
+              </div>
+            )}
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
 </body>
 </html>
