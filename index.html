@@ -19,6 +19,68 @@
   <script type="text/babel" data-presets="react">
     const { useState, useEffect, useRef } = React;
 
+    const FORMULAS = [
+      { id: 1, name: "Displacement", formula: "Δx = v₀t + ½at²", unit: "unit1", category: "Kinematics" },
+      { id: 2, name: "Velocity", formula: "v = v₀ + at", unit: "unit1", category: "Kinematics" },
+      { id: 3, name: "Average Velocity", formula: "v_avg = Δx/Δt", unit: "unit1", category: "Kinematics" },
+      { id: 4, name: "Acceleration", formula: "a = Δv/Δt", unit: "unit1", category: "Kinematics" },
+      { id: 5, name: "Kinematic Equation", formula: "v² = v₀² + 2aΔx", unit: "unit1", category: "Kinematics" },
+      { id: 6, name: "Vectors - Magnitude", formula: "|v| = √(vₓ² + vᵧ²)", unit: "unit1", category: "Vectors" },
+      { id: 7, name: "Vectors - Components", formula: "vₓ = v cos(θ), vᵧ = v sin(θ)", unit: "unit1", category: "Vectors" },
+      { id: 8, name: "Projectile Range", formula: "R = (v₀² sin(2θ))/g", unit: "unit1", category: "Projectile Motion" },
+      { id: 9, name: "Projectile Max Height", formula: "h = (v₀² sin²(θ))/(2g)", unit: "unit1", category: "Projectile Motion" },
+      { id: 10, name: "Newton's Second Law", formula: "F = ma", unit: "unit2", category: "Forces" },
+      { id: 11, name: "Friction Force", formula: "f = μN", unit: "unit2", category: "Forces" },
+      { id: 12, name: "Weight", formula: "W = mg", unit: "unit2", category: "Forces" },
+      { id: 13, name: "Gravitational Force", formula: "F_g = G(m₁m₂)/r²", unit: "unit2", category: "Forces" },
+      { id: 14, name: "Spring Force", formula: "F = kx", unit: "unit2", category: "Forces" },
+      { id: 15, name: "Centripetal Force", formula: "F_c = mv²/r", unit: "unit2", category: "Circular Motion" },
+      { id: 16, name: "Centripetal Acceleration", formula: "a_c = v²/r", unit: "unit2", category: "Circular Motion" },
+      { id: 17, name: "Angular Velocity", formula: "ω = Δθ/Δt", unit: "unit2", category: "Circular Motion" },
+      { id: 18, name: "Relationship v and ω", formula: "v = ωr", unit: "unit2", category: "Circular Motion" },
+      { id: 19, name: "Moment of Inertia", formula: "I = mr²", unit: "unit2", category: "Rotational" },
+      { id: 20, name: "Torque", formula: "τ = Fr sin(θ)", unit: "unit2", category: "Rotational" },
+      { id: 21, name: "Angular Momentum", formula: "L = Iω", unit: "unit2", category: "Rotational" },
+      { id: 22, name: "Work", formula: "W = F·d·cos(θ)", unit: "unit3", category: "Work & Energy" },
+      { id: 23, name: "Power", formula: "P = W/t", unit: "unit3", category: "Work & Energy" },
+      { id: 24, name: "Kinetic Energy", formula: "KE = ½mv²", unit: "unit3", category: "Energy" },
+      { id: 25, name: "Potential Energy (Gravity)", formula: "PE = mgh", unit: "unit3", category: "Energy" },
+      { id: 26, name: "Elastic Potential Energy", formula: "PE_elastic = ½kx²", unit: "unit3", category: "Energy" },
+      { id: 27, name: "Mechanical Energy", formula: "E_mech = KE + PE", unit: "unit3", category: "Energy" },
+      { id: 28, name: "Work-Energy Theorem", formula: "W_net = ΔKE", unit: "unit3", category: "Work & Energy" },
+      { id: 29, name: "Momentum", formula: "p = mv", unit: "unit3", category: "Momentum" },
+      { id: 30, name: "Impulse", formula: "J = FΔt = Δp", unit: "unit3", category: "Momentum" },
+      { id: 31, name: "Conservation of Momentum", formula: "p_i = p_f", unit: "unit3", category: "Momentum" },
+      { id: 32, name: "Elastic Collision", formula: "v₁' = ((m₁-m₂)v₁ + 2m₂v₂)/(m₁+m₂)", unit: "unit3", category: "Collisions" },
+      { id: 33, name: "Inelastic Collision", formula: "(m₁v₁ + m₂v₂) = (m₁+m₂)v_f", unit: "unit3", category: "Collisions" },
+      { id: 34, name: "Simple Harmonic Motion", formula: "x = A cos(ωt + φ)", unit: "unit4", category: "Oscillations" },
+      { id: 35, name: "SHM Velocity", formula: "v = -Aω sin(ωt + φ)", unit: "unit4", category: "Oscillations" },
+      { id: 36, name: "SHM Energy", formula: "E = ½kA²", unit: "unit4", category: "Oscillations" },
+      { id: 37, name: "Period of Spring", formula: "T = 2π√(m/k)", unit: "unit4", category: "Oscillations" },
+      { id: 38, name: "Period of Pendulum", formula: "T = 2π√(L/g)", unit: "unit4", category: "Oscillations" },
+      { id: 39, name: "Wave Speed", formula: "v = fλ", unit: "unit4", category: "Waves" },
+      { id: 40, name: "Intensity", formula: "I = P/A", unit: "unit4", category: "Waves" },
+      { id: 41, name: "Decibels", formula: "β = 10 log(I/I₀)", unit: "unit4", category: "Sound" },
+      { id: 42, name: "Doppler Effect", formula: "f' = f(v ± v_observer)/(v ∓ v_source)", unit: "unit4", category: "Sound" },
+      { id: 43, name: "Snell's Law", formula: "n₁ sin(θ₁) = n₂ sin(θ₂)", unit: "unit4", category: "Optics" },
+      { id: 44, name: "Lens Equation", formula: "1/f = 1/d_o + 1/d_i", unit: "unit4", category: "Optics" },
+      { id: 45, name: "Magnification", formula: "m = -d_i/d_o = h_i/h_o", unit: "unit4", category: "Optics" },
+      { id: 46, name: "Young's Double Slit", formula: "dsin(θ) = mλ", unit: "unit4", category: "Optics" },
+      { id: 47, name: "Single Slit Diffraction", formula: "a sin(θ) = mλ", unit: "unit4", category: "Optics" },
+      { id: 48, name: "Coulomb's Law", formula: "F = k(q₁q₂)/r²", unit: "unit5", category: "Electricity" },
+      { id: 49, name: "Electric Field", formula: "E = F/q", unit: "unit5", category: "Electricity" },
+      { id: 50, name: "Electric Potential", formula: "V = W/q", unit: "unit5", category: "Electricity" },
+      { id: 51, name: "Capacitance", formula: "C = Q/V", unit: "unit5", category: "Electricity" },
+      { id: 52, name: "Current", formula: "I = Q/t", unit: "unit5", category: "Electricity" },
+      { id: 53, name: "Resistance", formula: "R = ρL/A", unit: "unit5", category: "Electricity" },
+      { id: 54, name: "Ohm's Law", formula: "V = IR", unit: "unit5", category: "Electricity" },
+      { id: 55, name: "Power in Circuit", formula: "P = VI = I²R = V²/R", unit: "unit5", category: "Electricity" },
+      { id: 56, name: "Magnetic Force", formula: "F = qvB sin(θ)", unit: "unit5", category: "Magnetism" },
+      { id: 57, name: "Photon Energy", formula: "E = hf = hc/λ", unit: "unit5", category: "Modern Physics" },
+      { id: 58, name: "Einstein Mass-Energy", formula: "E = mc²", unit: "unit5", category: "Modern Physics" },
+      { id: 59, name: "Radioactive Decay", formula: "N = N₀e^(-λt)", unit: "unit5", category: "Nuclear Physics" }
+    ];
+
     const LESSONS = {
       unit1: {
         id: "unit1",
@@ -103,6 +165,9 @@
       const [xp, setXp] = useState(() => parseInt(localStorage.getItem("xp") || "0"));
       const [streak, setStreak] = useState(() => parseInt(localStorage.getItem("streak") || "0"));
       const [completed, setCompleted] = useState(() => JSON.parse(localStorage.getItem("completed") || "{}"));
+      const [currentFlashcardIndex, setCurrentFlashcardIndex] = useState(0);
+      const [isFlipped, setIsFlipped] = useState(false);
+      const [masteredFormulas, setMasteredFormulas] = useState(() => JSON.parse(localStorage.getItem("masteredFormulas") || "[]"));
 
       const level = Math.floor(xp / 100) + 1;
       const xpForLevel = (level - 1) * 100;
@@ -122,6 +187,15 @@
           setCompleted(newCompleted);
           localStorage.setItem("completed", JSON.stringify(newCompleted));
           addXp(10);
+        }
+      };
+
+      const markFormulaMastered = (formulaId) => {
+        if (!masteredFormulas.includes(formulaId)) {
+          const newMastered = [...masteredFormulas, formulaId];
+          setMasteredFormulas(newMastered);
+          localStorage.setItem("masteredFormulas", JSON.stringify(newMastered));
+          addXp(5);
         }
       };
 
@@ -216,8 +290,11 @@
                 <button className="btn btn-primary" onClick={() => setPage("practice")}>
                   📝 Practice Exam
                 </button>
-                <button className="btn btn-secondary" onClick={() => setPage("formulas")}>
+                <button className="btn btn-secondary" onClick={() => { setPage("formulas"); setCurrentFlashcardIndex(0); setIsFlipped(false); }}>
                   📐 Formula Sheet
+                </button>
+                <button className="btn btn-secondary" onClick={() => { setPage("flashcards"); setCurrentFlashcardIndex(0); setIsFlipped(false); }}>
+                  🎴 Flashcards
                 </button>
               </div>
             </section>
@@ -303,24 +380,20 @@
             ← Back
           </button>
           <div className="formulas-container">
-            <h1>📐 Formula Reference Sheet</h1>
-            <p>All formulas organized by unit</p>
+            <h1>📐 Complete Formula Reference ({FORMULAS.length} Formulas)</h1>
+            <p>All 59 essential physics formulas organized by category</p>
             <div className="formulas-grid">
-              {Object.values(LESSONS).map((unit) => (
-                <div key={unit.id} className="formula-unit">
-                  <h3>{unit.icon} {unit.title}</h3>
-                  <div className="formula-list">
-                    {unit.topics.length > 0 ? (
-                      unit.topics.map((topic) => (
-                        <div key={topic.id} className="formula-item">
-                          <code>{topic.title}</code>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="formula-item">
-                        <code>Coming soon...</code>
-                      </div>
-                    )}
+              {FORMULAS.map((formula) => (
+                <div key={formula.id} className="formula-card" style={{ borderLeftColor: LESSONS[formula.unit].color }}>
+                  <div className="formula-header">
+                    <h4>{formula.name}</h4>
+                    <span className="formula-category">{formula.category}</span>
+                  </div>
+                  <div className="formula-content">
+                    <code>{formula.formula}</code>
+                  </div>
+                  <div className="formula-unit-badge" style={{ backgroundColor: LESSONS[formula.unit].color }}>
+                    {LESSONS[formula.unit].icon} {LESSONS[formula.unit].title}
                   </div>
                 </div>
               ))}
@@ -329,12 +402,90 @@
         </div>
       );
 
+      const FlashcardsPage = () => {
+        const currentFormula = FORMULAS[currentFlashcardIndex];
+        const progress = ((currentFlashcardIndex + 1) / FORMULAS.length) * 100;
+
+        return (
+          <div className="flashcards-page">
+            <button className="back-btn" onClick={() => setPage("home")}>
+              ← Back
+            </button>
+            <div className="flashcards-container">
+              <h1>🎴 Formula Flashcards</h1>
+              <div className="flashcard-progress">
+                <div className="progress-info-fc">
+                  <span>{currentFlashcardIndex + 1} / {FORMULAS.length}</span>
+                  <span>Mastered: {masteredFormulas.length}</span>
+                </div>
+                <div className="progress-bar-fc">
+                  <div className="progress-fill-fc" style={{ width: `${progress}%` }}></div>
+                </div>
+              </div>
+
+              <div className="flashcard-wrapper">
+                <div
+                  className={`flashcard ${isFlipped ? "flipped" : ""}`}
+                  onClick={() => setIsFlipped(!isFlipped)}
+                  style={{ backgroundColor: LESSONS[currentFormula.unit].color }}
+                >
+                  <div className="flashcard-inner">
+                    <div className="flashcard-front">
+                      <div className="flashcard-label">Formula Name</div>
+                      <div className="flashcard-title">{currentFormula.name}</div>
+                      <div className="flashcard-hint">Click to reveal formula</div>
+                    </div>
+                    <div className="flashcard-back">
+                      <div className="flashcard-label">Formula</div>
+                      <code className="flashcard-formula">{currentFormula.formula}</code>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flashcard-controls">
+                <button 
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    setCurrentFlashcardIndex(Math.max(0, currentFlashcardIndex - 1));
+                    setIsFlipped(false);
+                  }}
+                  disabled={currentFlashcardIndex === 0}
+                >
+                  ← Previous
+                </button>
+                <button
+                  className="btn btn-success"
+                  onClick={() => {
+                    markFormulaMastered(currentFormula.id);
+                  }}
+                  style={{ opacity: masteredFormulas.includes(currentFormula.id) ? 0.5 : 1 }}
+                >
+                  {masteredFormulas.includes(currentFormula.id) ? "✓ Mastered" : "✓ Mark Mastered"}
+                </button>
+                <button 
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    setCurrentFlashcardIndex(Math.min(FORMULAS.length - 1, currentFlashcardIndex + 1));
+                    setIsFlipped(false);
+                  }}
+                  disabled={currentFlashcardIndex === FORMULAS.length - 1}
+                >
+                  Next →
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
       return (
         <div className="app">
           {page === "home" && <HomePage />}
           {page === "lessons" && <LessonsPage />}
           {page === "practice" && <PracticePage />}
           {page === "formulas" && <FormulasPage />}
+          {page === "flashcards" && <FlashcardsPage />}
         </div>
       );
     };
